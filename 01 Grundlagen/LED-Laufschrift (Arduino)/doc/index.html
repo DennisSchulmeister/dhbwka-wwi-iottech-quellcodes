@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>LED-Laufschrift (Arduino)</title>
+
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Rubik');
+
+            html {
+                font-family: "Rubik", sans-serif;
+                font-size: 10pt;
+                line-height: 1.6;
+            }
+
+            @media (min-width: 63em) {
+                html {
+                    font-size: 12pt;
+
+                    /* https://pixabay.com/photos/tool-work-repair-electrician-2766835/ */
+                    background-color: silver;
+                    background-image: url("img/tool-2766835_1280.jpg");
+                    background-size: cover;
+                    background-attachment: fixed;
+                    background-position: center;
+                }
+
+                section {
+                    background: white;
+                    box-shadow: 2px 2px 3px rgba(0,0,0, 0.3);
+
+                    max-width: 90em;
+                    margin: 0 auto;
+                    margin-top: 2em;
+                    margin-bottom: 2em;
+
+                    border-radius: 0.5rem;
+                    border: 1px solid #202020;
+                }
+
+                section > h1 {
+                    font-size: 200%;
+                    margin: 0;
+
+                    border-radius: 0.5rem 0.5rem 0 0;
+                }
+
+                section article {
+                    padding: 1em;
+                }
+
+                section p:first-child,
+                section h2:first-child,
+                section h3:first-child,
+                section h4:first-child {
+                    margin-top: 0;
+                }
+
+                section h2,
+                section h3,
+                section h4 {
+                    margin-bottom: 0.5em;
+                }
+            }
+
+            section > h1 {
+                padding: 0.25em;
+                margin-top: 1.5em;
+                color: white;
+                background: #0b557e;
+            }
+
+            section > h1:first-child {
+                margin-top: 0;
+            }
+
+            body > h1 {
+                text-align: center;
+                color: crimson;
+                text-shadow: white  1px  1px 1px,
+                             white  1px -1px 1px,
+                             white -1px  1px 1px,
+                             white -1px -1px 1px,
+                             black  2px  2px 2px,
+                             black  2px -2px 2px,
+                             black -2px  2px 2px,
+                             black -2px -2px 2px;
+                font-size: 300%;
+            }
+
+            p {
+                text-align: justify;
+                hyphens: auto;
+            }
+
+            a, a:visited {
+                color: #3968A1;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: #6E9ED9;
+            }
+
+            li {
+                margin-bottom: 0.5em;
+            }
+
+            .screenshot {
+                display: inline-block;
+                box-sizing: border-box;
+                width: 48%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                background: rgba(230,230,230);
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+
+                margin: 0.5em;
+
+                transition: transform 0.5s, box-shadow 0.5s;
+            }
+
+            .screenshot:hover {
+                transform: scale(1.025) rotate(1deg);
+                box-shadow: 2px 2px 4px rgba(0,0,0, 0.5);
+            }
+
+            .image {
+                display: inline-block;
+                width: 100%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+            }
+
+            .caption {
+                font-size: 85%;
+                text-align: center;
+            }
+
+            .footnote {
+                font-size: 75%;
+            }
+
+            pre.code {
+                margin-bottom: 1.5em !important;
+            }
+
+            table, tr, td {
+                vertical-align: top;
+            }
+            .filename {
+                font-family: monospace;
+                padding-right: 2em;
+                color: darkblue;
+            }
+            .skip {
+                padding-bottom: 1em;
+            }
+
+            /* LED-Laufschrift */
+            @keyframes marquee {
+                0% {
+                    margin-left: 100%;
+                }
+                100% {
+                    margin-left: -100%;
+                }
+            }
+
+            .led-marquee {
+                background: black;
+                color: red;
+                line-height: 0.5em;
+
+                overflow: hidden;
+                margin: 1em 0 1em 0;
+            }
+
+            .led-marquee > pre {
+                animation: marquee 13s linear infinite;
+            }
+
+            /* Konsole */
+            .console {
+                font-family: monospace;
+                color: silver;
+                background: black;
+                padding: 0.5em;
+            }
+
+            .prompt {
+                color: deepskyblue;
+            }
+
+            /* Tabellen */
+            table {
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid lightgrey;
+                text-align: left;
+                padding: 0.25em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>LED-Laufschrift mit Arduino</h1>
+
+        <section>
+            <h1>Beschreibung</h1>
+            <article>
+                <p>
+                    Im letzten Projekt haben wir mit Hilfe des Raspberry Pi und einer 4x64 LED-Matrix eine einfache
+                    LED-Laufschrift erzeugt. Dabei haben wir alle Schritte gesehen, die zur Umsetzung eines beliebigen
+                    IoT/Embedded-Projekts mit dem Pi notwendig sind. Angefangen von der Hardware über das Betriebssystem
+                    bis hin zu einem selbstgeschriebenen Python-Programm, das die eigentliche Laufschrift erzeugt. Doch
+                    die Wahrheit ist, dass der Raspberry Pi für so eine einfache Aufgabe viel zu leistungsfähig ist. In
+                    etwa so, wie der Roboter „Marvin“ aus „Per Anhalter durch die Galaxis“ zwar ein unendlich großes
+                    Elektronengehirn von der Kapazität mehrerer Galaxien besitzt, dann aber nur dazu eingesetzt wird,
+                    niedere Arbeiten auf der „Heart of Gold“ auszuführen. So ist es auch mit unserer Laufschrift, die
+                    genauso gut auch mit einer kleineren Hardware realisiert werden kann. In diesem Projekt zeigen wir daher,
+                    wie dieselbe Anwendung mit einem <a href="https://www.arduino.cc/" target="_blank">Arduino Board</a>
+                    bzw. dem darin verbauten <a href="https://de.wikipedia.org/wiki/Microchip_AVR" target="_blank">AVR-Microcontroller</a>
+                    realisiert werden kann.
+                </p>
+                <p>
+                    Hauptbestandteil des Projekts (neben dem eingebetteten Computersystem) ist weiterhin die 4x64 LED-Matrix
+                    von AZ-Delivery, wie in der folgenden Abbildung dargestellt. Sie soll in Endlosschleife einfach
+                    eine Textnachricht als Laufschrift von links nach rechts durchlaufen lassen. Der Inhalt der Nachricht
+                    lautet dieses Mal <b>„Hallo, Arduino und hallo, AVR!”</b>.
+                </p>
+                <img src="img/arduino.jpg" alt="Arduino Uno" class="image" style="max-width: 31em">
+                <img src="img/led-matrix.png" alt="4x64 LED-Matrix von AZ-Delivery" class="image" style="max-width: 20em">
+                <img src="img/button.jpg" alt="Button" class="image" style="max-width: 10em">
+                <p>
+                    Ungefähr so soll die Laufschrift auf dem LED-Display aussehen:
+                </p>
+<div class="led-marquee"><pre>
+•  •         •   •               •             •        •                                •   •             •   •               •   •   • ••••  •
+•  •         •   •              • •            •                                         •   •             •   •              • •  •   • •   • •
+•  •  •••    •   •   •••       •   • •  ••  •••• •   •  •  ••••   •••    •   • ••••   ••••   ••••   •••    •   •   •••       •   • •   • •   • •
+••••     •   •   •  •   •      •   •  ••   •   • •   •  •  •   • •   •   •   • •   • •   •   •   •     •   •   •  •   •      •   • •   • ••••  •
+•  •  ••••   •   •  •   •      •••••  •    •   • •   •  •  •   • •   •   •   • •   • •   •   •   •  ••••   •   •  •   •      ••••• •   • • •
+•  • •   •   •   •  •   •  •   •   •  •    •   • •   •  •  •   • •   •   •   • •   • •   •   •   • •   •   •   •  •   •  •   •   •  • •  •  •
+•  •  ••• • ••• •••  •••   •   •   •  •     ••••  •••  ••• •   •  •••     •••  •   •  ••••   •   •  ••• • ••• •••  •••   •   •   •   •   •   • •
+                          •                                                                                              •<pre></div>
+                <p>
+                    Und wiedermal soll es über einen zusätzlich angeschlossenen Button möglich sein, die Laufschrift zu stoppen
+                    sowie weiterlaufen zu lassen.
+                </p>
+            </article>
+        </section>
+
+        <section>
+            <h1>Hardwareaufbau</h1>
+            <article>
+                <p>
+                    Die grobe Architekturskizze sieht auf den ersten Blick nicht anders aus, als bei der
+                    Raspberry-Pi-Version. Wir haben lediglich den Pi durch einen Arduino ersetzt. Und auch
+                    der Schaltplan unterscheidet sich nur im Detail, da wir auf dem Arduino andere Pins für
+                    die GPIO-Funktionen nutzen müssen. Davon abgesehen bleibt aber alles beim Alten.
+                </p>
+                <a href="img/skizze_arduino.png" target="_blank">
+                    <img
+                        src   = "img/skizze_arduino.png"
+                        alt   = "Erste grobe Hardwareskizze"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/schaltplan_arduino.png" target="_blank">
+                    <img
+                        src   = "img/schaltplan_arduino.png"
+                        alt   = "Schaltplan"
+                        class = "screenshot"
+                    />
+                </a>
+                <p>
+                    Eine Beschreibung der GPIO-Pins des hier verwendeten Arduino Uno findet sich in der
+                    <a href="https://www.arduino.cc/en/reference/board" target="_blank">offiziellen Referenzdokumentation</a>,
+                    von der auch die nächste Abbildung stammt. Der Grund, warum die LED-Matrix im zweiten
+                    Foto direkt mit dem Arduino verbunden wurde, ist, dass sich herausgestellt hat, dass
+                    sie am Arduino wegen durch die Verkabelung verursachter Interferenzen und Stromschwankungen
+                    sonst nicht zuverlässig läuft. Die Kontakte, die von der linken Seite des Breadboards
+                    zur LED-Matrix gehen, sind daher in Wirklichkeit unbenutzt.
+                </p>
+                <a href="img/gpio.png" target="_blank">
+                    <img
+                        src   = "img/gpio.png"
+                        alt   = "Hardwareskizze des Arduino Uno inkl. Pin-Nummern"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/breadboard_arduino.jpg" target="_blank">
+                    <img
+                      -  src   = "img/breadboard_arduino.jpg"
+                        alt   = "Erster Versuchsaufbau auf dem Breadboard"
+                        class = "screenshot"
+                    />
+                </a>
+                <p>
+                    Das Besondere an den klassischen Arduinos (tatsächlich gibt es viele Varianten des Arduino)
+                    im Vergleich zum Raspberry Pi ist, dass hier wirklich der gesamte Computer in einem einzigen
+                    Chip steckt. Die gesamte Platine ist eigentlich nur dafür da, eine minimale Grundschaltung
+                    für den Microcontroller zu liefern, die GPIO-Ports „benutzerfreundlich“ über die Pin-Leiste
+                    herauszuführen, sowie eine Uploadmöglichkeit für den Anwendungscode zu bieten. Da der zugrunde
+                    liegende AVR-Microcontroller aber wirklich nur ganz wenig zusätzliche Bauteile benötigt, lässt
+                    sich die Schaltung auch ohne Arduino-Board komplett auf dem Steckbrett realisieren, wie folgende
+                    Bilder zeigen.
+                </p>
+                <a href="img/skizze_avr_grundschaltung.png" target="_blank">
+                    <img
+                        src   = "img/skizze_avr_grundschaltung.png"
+                        alt   = "Skizze der Grundschaltung des AVR-Microcontrollers"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/schaltplan_avr_grundschaltung.png" target="_blank">
+                    <img
+                        src   = "img/schaltplan_avr_grundschaltung.png"
+                        alt   = "Schaltplan der Grundschaltung des AVR-Microcontrollers"
+                        class = "screenshot"
+                    />
+                </a>
+                <p>
+                    Auch wenn hier unsere eigenen Komponenten zunächst noch fehlen, ist das natürlich schon
+                    deutlich komplexer als unsere bisherigen, einfachen Schaltpläne. Betrachten wir die einzelnen
+                    Baugruppen jedoch getrennt voneinander, stellen wir fest, dass jede nur aus einer kleinen Handvoll
+                    elementarer Bauteile besteht, die zusammen nicht mehr als einen Euro kosten. Das Teuerste an
+                    der ganzen Schaltung ist der Microcontroller, der z.B. bei
+                    <a href="https://www.mouser.de/" target="_blank">Mouser</a> für unter zwei Euro angeboten wird.
+                    Eine Anleitung zum Zusammenbauen der Schaltung findet sich auf der Arduino-Seite
+                    <a href="https://www.arduino.cc/en/Tutorial/ArduinoToBreadboard" target="_blank">hier</a>
+                    und <a href="https://www.arduino.cc/en/Main/Standalone" target="_blank">hier</a>. Auf der
+                    Seite components101.com gibt es auch ein
+                    <a href="https://components101.com/microcontrollers/arduino-uno" target="_blank">Mapping der Pin-Belegung</a>
+                    zwischen Arduino-Board und AVR-Microcontroller.
+                </p>
+                <a href="img/arduino-pinout.png" target="_blank">
+                    <img
+                        src   = "img/arduino-pinout.png"
+                        alt   = "Mapping der Pinbelegung zwischen Arduino und AVR"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/schaltplan_avr_extras.png" target="_blank">
+                    <img
+                        src   = "img/schaltplan_avr_extras.png"
+                        alt   = "Schaltplan mit unseren eigenen Komponenten"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/breadboard_avr_grundschaltung.jpg" target="_blank">
+                    <img
+                        src   = "img/breadboard_avr_grundschaltung.jpg"
+                        alt   = "Grundschaltung des AVR-Microcontrollers auf einem Breadboard"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/breadboard_avr_extras.jpg" target="_blank">
+                    <img
+                        src   = "img/breadboard_avr_extras.jpg"
+                        alt   = "Die komplette Schaltung mit Microcontroller, LED-Matrix und Start/Stopp-Taste"
+                        class = "screenshot"
+                    />
+                </a>
+            </article>
+        </section>
+
+        <section>
+            <h1>Programmierung</h1>
+            <article>
+                <p>
+                    Im Gegensatz zum Raspberry Pi handelt es sich beim Arduino (bzw. dem ATMega) um einen einfachen
+                    Microcontroller mit vergleichsweise geringer Leistung. Der Prozessor arbeitet intern gerade mal
+                    mit 8&nbsp;Bit bei einem Takt von 16&nbsp;MHz. Für den Anwendungscode stehen ein 32&nbsp;kB großer Flash ROM
+                    sowie 2&nbsp;kB Hauptspeicher zur Verfügung. Im Vergleich zum Raspberry Pi sind das geradezu verschwindend
+                    kleine Zahlen. Dennoch kann ein solcher Microcontroller viele Aufgaben genauso schnell oder gar
+                    schneller und genauer ausführen. Denn der Anwendungscode läuft hier direkt auf der Hardware ohne
+                    Betriebssystem, dynamische Bibliotheken, Laufzeitumgebungen, Hintergrundanwendungen und so weiter.
+                    Im selben Umfang, wie ein ATMega weniger Leistung als ein Raspberry Pi besitzt, reduziert sich
+                    auch der Software-Stack auf ein absolutes Minimum, wodurch die Geschwindigkeit wieder eingeholt wird.
+                </p>
+                <p>
+                    Dies wirkt sich natürlich auch auf die Programmierung aus, so dass für die meisten Microcontroller
+                    weit weniger Programmiersprachen als für andere Plattformen zur Verfügung stehen. Denn es kommen
+                    von vornherein nur solche Sprachen in Betracht, die direkt zu Maschinencode kompiliert werden können.
+                    Die meisten Microcontroller werden daher in Assembler, C oder C++ programmiert. So auch der Arduino,
+                    für den es zwar Adaptionen von JavaScript oder Python gibt, die praktisch aber kaum Bedeutung haben,
+                    da sie prinzipbedingt nicht die volle Leistung der Hardware ausschöpfen können. Die meisten Arduinos
+                    werden daher wie alle AVR-Microcontroller in C/C++ programmiert, wobei es für Arduino eine vereinfachte
+                    Variante gibt, in der insbesondere die Hardwareansteuerung vereinfacht wurde. Die Entwicklung erfolgt
+                    dabei häufig in der <a href="https://www.arduino.cc/en/main/software" target="_blank">Arduino IDE</a>,
+                    die zwar keinen besonders leistungsfähigen Codeeditor besitzt, dafür aber alle notwendigen Schritte
+                    zum Compilieren, Übertragen und Ausführen der Programme automatisiert.
+                </p>
+                <a href="img/ide_quellcode.png" target="_blank">
+                    <img
+                        src   = "img/ide_quellcode.png"
+                        alt   = "Quellcode in der Arduino IDE"
+                        class = "screenshot"
+                    />
+                </a>
+                <p>
+                    Damit der in der Abbildung dargestellte Quellcode kompiliert werden kann, müssen erst noch zwei
+                    Quellcode-Bibliotheken zur Ansteuerung der LED-Matrix installiert werden. Dies geschieht in der
+                    Arduino IDE über den Menüpunkt <b>„Sketch” → „Include Library” → „Manage Libraries…”</b>. Im
+                    darauf folgenden Popup müssen dann folgende zwei Bibliotheken gesucht und installiert werden:
+                </p>
+                <ul>
+                    <li>
+                        <b>MD_MAX72XX:</b> Bibliothek zur grundlegenden Ansteuerung der LED-Matrix
+                    </li>
+                    <li>
+                        <b>MD_Parola:</b> Auf MD_MAX72XX aufbauende Bibliothek mit vorgefertigten Anzeigeeffekten
+                    </li>
+                </ul>
+                <a href="img/ide_bibliotheken.png" target="_blank">
+                    <img
+                        src   = "img/ide_bibliotheken.png"
+                        alt   = "Installation von MD_MAX72XX und MD_Parole im Library Manager"
+                        class = "screenshot"
+                    />
+                </a>
+                <p>
+                    Spätestens jetzt muss der Arduino über ein USB-Kabel mit dem Entwicklungsrechner verbunden werden.
+                    Im Menü <b>„Tools“</b> muss dann unter <b>„Port”</b> und <b>„Board”</b> sichergestellt werden, dass
+                    der richtige USB-Anschluss sowie die richtige Arduino-Variante ausgewählt wurden. Die Werte sollten
+                    mit der Anzeige von <b>„Get Board Info“</b>, womit ein paar allgemeine Informationen zum angeschlossenen
+                    Arduino abgerufen werden, übereinstimmen. Unter Linux könnte das im Falle des Arduino Uno zum Beispiel
+                    so aussehen:
+                </p>
+                <a href="img/ide_verbindung1.png" target="_blank">
+                    <img
+                        src   = "img/ide_verbindung1.png"
+                        alt   = "Auswahl der Arduino-Variante und des USB-Anschlusses im Menü „Tools”"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/ide_verbindung2.png" target="_blank">
+                    <img
+                        src   = "img/ide_verbindung2.png"
+                        alt   = "Anzeige der Informationen zum angeschlossenen Arduino-Board"
+                        class = "screenshot"
+                        style = "max-width: 20em"
+                    />
+                </a>
+                <p>
+                    Anschließend kann der Quellcode kompiliert und auf den Arduino übertragen werden, indem einfach der
+                    Menüpunkt <b>„Sketch“ → „Upload”</b> ausgewählt wird. Alternativ kann auch der Upload-Button in der
+                    Toolbar (zweiter von links) gedrückt werden. Wenig später sollten dann folgende Meldungen im unteren
+                    Bereich der IDE auftauchen und die Laufschrift sollte zu Laufen beginnen.
+                </p>
+                <a href="img/ide_upload.png" target="_blank">
+                    <img
+                        src   = "img/ide_upload.png"
+                        alt   = "Konsolenmeldungen nach dem Kompilieren und Übertragen an den Arduino"
+                        class = "screenshot"
+                    />
+                </a>
+                <p>
+                    Nach einer Quellcodeänderung kann das Programm auf dieselbe Weise jederzeit erneut auf den Arduino übertragen werden.
+                    Die Upload-Funktion stellt immer sicher, dass der Quellcode erneut kompiliert, der Arduino neugestartet und der kompilierte
+                    Maschinencode übertragen und danach ausgeführt wird. Mit nur einem Klick. Der kompilierte Code wird dadurch dauerhaft
+                    im AVR-Chip gespeichert, so dass der Arduino ihn jedes Mal ausführt, sobald er mit Strom versorgt wird.
+                </p>
+            </article>
+        </section>
+    </body>
+</html>

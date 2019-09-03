@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>LED-Laufschrift (Raspberry Pi)</title>
+
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Rubik');
+
+            html {
+                font-family: "Rubik", sans-serif;
+                font-size: 10pt;
+                line-height: 1.6;
+            }
+
+            @media (min-width: 63em) {
+                html {
+                    font-size: 12pt;
+
+                    /* https://pixabay.com/photos/tool-work-repair-electrician-2766835/ */
+                    background-color: silver;
+                    background-image: url("img/tool-2766835_1280.jpg");
+                    background-size: cover;
+                    background-attachment: fixed;
+                    background-position: center;
+                }
+
+                section {
+                    background: white;
+                    box-shadow: 2px 2px 3px rgba(0,0,0, 0.3);
+
+                    max-width: 90em;
+                    margin: 0 auto;
+                    margin-top: 2em;
+                    margin-bottom: 2em;
+
+                    border-radius: 0.5rem;
+                    border: 1px solid #202020;
+                }
+
+                section > h1 {
+                    font-size: 200%;
+                    margin: 0;
+
+                    border-radius: 0.5rem 0.5rem 0 0;
+                }
+
+                section article {
+                    padding: 1em;
+                }
+
+                section p:first-child,
+                section h2:first-child,
+                section h3:first-child,
+                section h4:first-child {
+                    margin-top: 0;
+                }
+
+                section h2,
+                section h3,
+                section h4 {
+                    margin-bottom: 0.5em;
+                }
+            }
+
+            section > h1 {
+                padding: 0.25em;
+                margin-top: 1.5em;
+                color: white;
+                background: #0b557e;
+            }
+
+            section > h1:first-child {
+                margin-top: 0;
+            }
+
+            body > h1 {
+                text-align: center;
+                color: crimson;
+                text-shadow: white  1px  1px 1px,
+                             white  1px -1px 1px,
+                             white -1px  1px 1px,
+                             white -1px -1px 1px,
+                             black  2px  2px 2px,
+                             black  2px -2px 2px,
+                             black -2px  2px 2px,
+                             black -2px -2px 2px;
+                font-size: 300%;
+            }
+
+            p {
+                text-align: justify;
+                hyphens: auto;
+            }
+
+            a, a:visited {
+                color: #3968A1;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: #6E9ED9;
+            }
+
+            li {
+                margin-bottom: 0.5em;
+            }
+
+            .screenshot {
+                display: inline-block;
+                box-sizing: border-box;
+                width: 48%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                background: rgba(230,230,230);
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+
+                margin: 0.5em;
+
+                transition: transform 0.5s, box-shadow 0.5s;
+            }
+
+            .screenshot:hover {
+                transform: scale(1.025) rotate(1deg);
+                box-shadow: 2px 2px 4px rgba(0,0,0, 0.5);
+            }
+
+            .image {
+                display: inline-block;
+                width: 100%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+            }
+
+            .caption {
+                font-size: 85%;
+                text-align: center;
+            }
+
+            .footnote {
+                font-size: 75%;
+            }
+
+            pre.code {
+                margin-bottom: 1.5em !important;
+            }
+
+            table, tr, td {
+                vertical-align: top;
+            }
+            .filename {
+                font-family: monospace;
+                padding-right: 2em;
+                color: darkblue;
+            }
+            .skip {
+                padding-bottom: 1em;
+            }
+
+            /* LED-Laufschrift */
+            @keyframes marquee {
+                0% {
+                    margin-left: 100%;
+                }
+                100% {
+                    margin-left: -100%;
+                }
+            }
+
+            .led-marquee {
+                background: black;
+                color: red;
+                line-height: 0.5em;
+
+                overflow: hidden;
+                margin: 1em 0 1em 0;
+            }
+
+            .led-marquee > pre {
+                animation: marquee 13s linear infinite;
+            }
+
+            /* Konsole */
+            .console {
+                font-family: monospace;
+                color: silver;
+                background: black;
+                padding: 0.5em;
+            }
+
+            .prompt {
+                color: deepskyblue;
+            }
+
+            /* Tabellen */
+            table {
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid lightgrey;
+                text-align: left;
+                padding: 0.25em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>LED-Laufschrift mit Raspberry Pi</h1>
+
+        <section>
+            <h1>Beschreibung</h1>
+            <article>
+                <p>
+                    In diesem Projekt geht es darum, anhand eines einfachen Beispiels den grundlegenden Aufbau
+                    eines einfachen IoT/Embedded Device mit Raspberry Pi zu demonstrieren. Die Besonderheit dabei
+                    ist der Raspberry Pi, der auf Basis eines BCM2835 (bzw. Weiterentwicklungen davon) System-an-a-Chip
+                    einen vollständigen Einplatinenrechner (auch „Development Board” genannt) mit ARM-Microprozessor
+                    und mindestens 1 GB Hauptspeicher darstellt. Der Raspberry Pi besitzt somit die gleiche Leistung
+                    wie ein mittelstarker Desktoprechner der letzten fünf bis zehn Jahre und wird deshalb überwiegend
+                    mit einem Linux-Betriebssystem betrieben. Er eignet sich daher besonders für komplexe IoT-Anwendungen.
+                </p>
+                <p>
+                    Hauptbestandteil des Projekts (neben dem eingebetteten Computersystem) ist eine 4x64 LED-Matrix
+                    von AZ-Delivery, wie in der folgenden Abbildung dargestellt. Sie soll in Endlosschleife einfach
+                    eine Textnachricht als Laufschrift von links nach rechts durchlaufen lassen. Der Inhalt der Nachricht
+                    soll <b>„Hallo, Raspberry Pi!”</b> lauten.
+                </p>
+                <img src="img/raspberrypi.jpg" alt="Raspberry Pi" class="image" style="max-width: 20em">
+                <img src="img/led-matrix.png" alt="4x64 LED-Matrix von AZ-Delivery" class="image" style="max-width: 20em">
+                <img src="img/button.jpg" alt="Button" class="image" style="max-width: 10em">
+                <p>
+                    Ungefähr so soll die Laufschrift auf dem LED-Display aussehen:
+                </p>
+<div class="led-marquee"><pre>
+
+•  •      • •          •••                 •                          •••  • •
+•  •  ••• • •  ••      •  •  •••  ••• •••  •••   ••  • •• • •• •  •   •  •   •
+•••• •  • • • •  •     •••  •  • ••   •  • •  • •••• ••   ••   •  •   •••  • •
+•  • •  • • • •  •     •  • •  •   •• •  • •  • •    •    •    •  •   •    •
+•  •  ••• • •  ••  •   •  •  ••• •••  •••  •••   ••• •    •     •••   •    • •
+                  •                   •                           •
+                                      •                         ••<pre></div>
+                <p>
+                    Über einen zusätzlich angeschlossenen Button soll es möglich sein, die Laufschrift zu stoppen
+                    sowie weiterlaufen zu lassen.
+                </p>
+            </article>
+        </section>
+
+        <section>
+            <h1>Hardwareaufbau</h1>
+            <article>
+                <p>
+                    Als ersten Überblick erstellen wir erst eine grobe Skizze mit allen größeren Baugruppen
+                    und ihren logischen Verbindungen. Dieses Projekt hat da zwar nicht viel, man sollte sich
+                    dieses Vorgehen aber gleich von Anfang angewöhnen.
+                </p>
+                <div>
+                    <a href="img/skizze.png" target="_blank">
+                        <img
+                            src   = "img/skizze.png"
+                            alt   = "Erste grobe Hardwareskizze"
+                            class = "screenshot"
+                        />
+                    </a>
+                </div>
+
+                <p>
+                    Diese Skizze können wir dann schrittweise zu einem vollständigen, elektrischen Schaltplan
+                    erweitern. Hier sehen wir jetzt deutlich mehr Details, da der komplette Stromfluss dargestellt
+                    wird. Dies beinhaltet sowohl die genauen, elektrischen Verbindungen zwischen den Bauteilen
+                    als auch notwendige, kleinere Bauteile wie Widerstände und Kondensatoren. Lediglich die
+                    Stromversorgung des Raspberry Pi wurde hier ausgespart.
+                </p>
+                <div>
+                    <a href="img/schaltplan.png" target="_blank">
+                        <img
+                            src   = "img/schaltplan.png"
+                            alt   = "Schaltplan"
+                            class = "screenshot"
+                        />
+                    </a>
+                </div>
+                <p>
+                    Die obere Skizze wurde mit <a href="https://inkscape.org/" target="_blank">Inkscape</a>, die untere
+                    mit <a href="https://www.draw.io/" target="_blank">draw.io</a> erstellt. Für die Erstellung elektrischer
+                    Schaltpläne gibt es viele professionelle Spezialprogramme. Für unsere Belange reicht draw.io allerdings
+                    vollkommen aus und funktioniert auch wesentlich besser, einfacher und fehlerfreier als das bekanntere
+                    <a href="https://fritzing.org/home/" target="_blank">Fritzing</a>! Wie solche Schaltpläne gelesen werden
+                    und wie du eigene Schaltpläne erstellen kannst, schauen wir uns im Kapitel „Hardwaredesign” an.
+                </p>
+
+                <p>
+                    Eine gute Darstellung der GPIO-Pins des Raspberry Pi findet sich in der
+                    <a href="https://www.raspberrypi.org/documentation/usage/gpio/README.md" target="_blank">Dokumentation auf der offiziellen Webseite</a>.
+                </p>
+                <a href="img/gpio1.jpg" target="_blank">
+                    <img
+                        src   = "img/gpio1.jpg"
+                        alt   = "GPIO-Header des Raspberry Pi"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/gpio2.png" target="_blank">
+                    <img
+                      -  src   = "img/gpio2.png"
+                        alt   = "Pin-Belegung des GPIO-Headers"
+                        class = "screenshot"
+                    />
+                </a>
+
+                <p>
+                    Die erste Abbildung unten links zeigt den Prototypen auf einem
+                    <a href="https://de.wikipedia.org/wiki/Steckplatine" target="_blank">Breadboard</a> bzw. einer Steckplatine.
+                    Auf diese Weise kann unkompliziert mit der Schaltung getestet und experimentiert werden. Jedoch lässt sich
+                    diese Lösung nicht dauerhaft sichern, da die gesteckten Verbindungen sich schnell lösen können. Abhilfe
+                    kann hier eine
+                    <a href="https://de.wikipedia.org/wiki/Leiterplatte#Prototypen" target="_blank">Lochrasterplatine</a>
+                    schaffen, wie auf den restlichen Bildern gezeigt.
+                </p>
+                <a href="img/breadboard.jpg" target="_blank">
+                    <img
+                      -  src   = "img/breadboard.jpg"
+                        alt   = "Versuchsaufbau auf dem Breadboard"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/lochrasterplatine1.jpg" target="_blank">
+                    <img
+                      -  src   = "img/lochrasterplatine1.jpg"
+                        alt   = "Versuchsaufbau auf einer Lochrasterplatine"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/lochrasterplatine2.jpg" target="_blank">
+                    <img
+                      -  src   = "img/lochrasterplatine2.jpg"
+                        alt   = "Rückseite der Lochrasterplatine"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/lochrasterplatine3.jpg" target="_blank">
+                    <img
+                      -  src   = "img/lochrasterplatine3.jpg"
+                        alt   = "Arbeitsplatz für Hobby-Elektroniker und solche, die es werden wollen"
+                        class = "screenshot"
+                    />
+                </a>
+
+                <p>
+                    Als nächstes kämen nun Entwurf und Fertigung einer vollwertigen, „gedruckten“ Leiterplatte.
+                    Also einer professionell hergestellten Platine (gar nicht so teuer, wie man denkt, aber
+                    dennoch aufwändig). Für dieses kleine Projekt wäre das aber ziemlicher
+                    <a href="https://de.wikipedia.org/wiki/Overkill" target="_blank">Overkill</a>.
+                    Da reicht es, einfach die Lochrasterplatine zusammen mit den anderen Komponenten in ein
+                    schönes Gehäuse zu bauen.
+                </p>
+            </article>
+        </section>
+
+        <section>
+            <h1>Betriebssystem</h1>
+            <article>
+                <h2>Vorbereiten der SD-Karte</h2>
+                <p>
+                    Anders als bei kleineren Microcontrollern laufen die Anwendungsprogramme auf dem Raspberry Pi nur in
+                    seltenen Ausnahmefällen ohne Betriebssystem direkt auf der Hardware. Stattdessen kommt meistens eine
+                    angepasste Linux-Distribution zum Einsatz. Häufig handelt es sich dabei um das von der Raspberry Pi
+                    Foundation herausgegebene <a href="https://www.raspbian.org/" target="_blank">Raspbian</a>, das im
+                    Grunde genommen ein angepasstes <a href="https://www.debian.org/" target="_blank">Debian</a> ist. Von
+                    diesem gibt es wiederum drei Varianten, die sich in der Anzahl der vorinstallierten Programme unterscheiden.
+                    Rasbpian Lite ist dabei für Projekte wie dieses besonders geeignet, da es kaum mehr als das Basissystem
+                    und keine unnötigten Anwendungsprogramme beinhaltet.
+                </p>
+                <p>
+                    Der erste Schritt besteht deshalb daraus, Raspbian Liste von der
+                    <a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank">offiziellen Downloadseite</a>
+                    herunterzuladen und auf eine Mini SD-Karte zu schreiben. Von dieser muss der Pi dann gestartet werden.
+                </p>
+                <p>
+                    Eine andere Möglichkeit wäre, mit einem Werkzeug wie <a href="https://buildroot.org/" target="_blank">Buildroot</a>
+                    ein komplett eigenes Linux-Image zusammenzustellen. Dies ist insbesondere für die professionelle
+                    IoT- und Embedded-Produktentwicklung relevant. Auf der Seite
+                    <a href="https://www.wpvs.de/#/iot-workshop" target="_blank">wpvs.de</a> haben wir ein ausführliches
+                    Skript dazu, in der Vorlesung werden wir das allerdings erst einmal nicht vertiefen.
+                </p>
+
+                <h2>Erste Anmeldung und Basiskonfiguration</h2>
+                <p>
+                    Die erste Anmeldung am Raspberry Pi muss direkt am Gerät mit angeschlossener Tastatur und Bildschirm
+                    erfolgen. Denn anfangs ist weder ein SSH-Server installiert, noch wurde die Netzwerkverbindung konfiguriert.
+                    Nach dem Hochfahren melden wir uns daher mit folgenden Zugangsdaten an:
+                </p>
+                <ul>
+                    <li>
+                        <b>Benutzername:</b> pi
+                    </li>
+                    <li>
+                        <b>Passwort:</b> raspberry
+                    </li>
+                </ul>
+                <p>
+                    <b>Achtung!</b> Bei der ersten Anmeldung ist noch ein englisches Tastaturlayout voreingestellt.
+                    Die Tasten Z und Y sind daher (neben vielen anderen) vertauscht.
+                </p>
+                <p>
+                    Die Basiseinrichtung des Betriebssystems erfolgt mit dem Programm <tt>raspi-config</tt>,
+                    das mit folgendem Befehl aufgerufen werden kann (ohne das Dollarzeichen am Anfang):
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    sudo raspi-config
+                </div>
+                <p>
+                    Hier müssen folgende Einstellungen geändert werden:
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Menüoption</th>
+                            <th>Eingaben bzw. Auswahl</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>
+                            Localisation Options → Change Locale
+                        </td>
+                        <td>
+                            In der ersten Liste zusätzlich die beiden Einträge
+                            „<tt>de_DE ISO-8859-1</tt>” und „<tt>de_DE UTF-8</tt>”
+                            auswählen. In der zweiten Liste dann „<tt>de_DE</tt>”
+                            als Standardsprache auswählen. Danach ca. eine Minute
+                            warten, bis die Generierung abgeschlossen ist.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Localisation Options → Change Timezone
+                        </td>
+                        <td>
+                            In der ersten Liste „<tt>Europe</tt>“, in der zweiten
+                            „<tt>Berlin</tt>“ auswählen.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Localisation Options → Change Wi-Fi Country
+                        </td>
+                        <td>
+                            Hier „<tt>DE Germany</tt>” auswählen.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Interfacing Options → SPI
+                        </td>
+                        <td>
+                            Die Frage, ob das SPI-Interface aktiviert werden soll, bejahen.
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    Die Konfiguration des Tastaturlayouts funktioniert aktuell (Stand: August 2019) leider
+                    nicht richtig. Die Änderung kann aber mit einem einfachen Texteditor manuell vorgenommen
+                    werden:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    sudo nano /etc/default/keyboard
+                </div>
+                <p>
+                    In der Datei müssen folgende Einträge vorhanden sein bzw. angepasst werden:
+                </p>
+                <div class="console">
+                    XKBMODEL="pc105" <br/>
+                    XKBLAYOUT="de" <br/>
+                    XKBVARIANT="" <br/>
+                    XKBOPTIONS="" <br/>
+                    <br/>
+                    BACKSPACE="guess"
+                </div>
+                <p>
+                    Mit <tt>Strg+O</tt> können die Änderungen gesichert werden. Mit <tt>Strg+X</tt> wird
+                    der Editor beendet. Danach sollte der Pi einmal mit folgendem Befehl neugestartet werden:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    reboot
+                </div>
+
+                <h2>WLAN konfigurieren</h2>
+                <p>
+                    Falls der Pi über ein Netzwerkkabel im Internet hängt, ist alles in Ordnung. Das Netzwerk
+                    sollte sich beim Hochfahren automatisch konfigurieren und kann mit folgenden Befehlen
+                    getestet werden:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    ip addr show <br/>
+                    <span class="prompt">~ $</span>
+                    ping web.de <br/>
+                </div>
+                <p>
+                    Das WLAN kann sich hingegen nicht selbst konfigurieren, da der Pi erst wissen muss, mit welchem
+                    Netz er sich verbinden muss und welches Kennwert er dafür benötigt. Diese Informationen können
+                    in der Datei <tt>/etc/wpa_supplicant/wpa_supplication.conf</tt> wie folgt hinterlegt werden:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    sudo nano /etc/wpa_supplication/wpa_supplicant.conf
+                </div>
+                <p>
+                    Im einfachsten Fall müssen hier nur folgende Zeilen hinzugefügt werden:
+                </p>
+                <div class="console">
+                    network={ <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp; ssid="Name des WLAN-Netzwerks" <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp; psk="Kennwort" <br/>
+                    } <br/>
+                </div>
+                <p>
+                    Danach die Datei wieder mit <tt>Strg+O</tt> sichern und den Editor mit <tt>Strg+X</tt> verlassen.
+                    Mit folgenden Befehlen kann die WLAN-Verbindung getrennt (falls durch einen früheren Versuch bereits
+                    verbunden) und danach erneut aufgebaut werden:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    sudo ifconfig wlan0 down <br/>
+                    <span class="prompt">~ $</span>
+                    sudo ifconfig wlan0 up <br/>
+                </div>
+                <p>
+                    Nach einer Weile sollte folgender Befehl mindestens eine gültige IP-Adresse anzeigen. Da der
+                    Verbindungsaufbau aber eine Weile gehen kann, muss der Befehl ggf. mehrfach ausgeführt werden,
+                    bevor man etwas sieht.
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    ip addr show wlan0
+                </div>
+
+                <h2>Fernzugriff via SSH erlauben</h2>
+                <p>
+                    Eine beliebte Möglichkeit, entfernte Rechner, die entweder weit weg sind oder keinen Bildschirm
+                    und keine Tastatur besitzen, zu bedienen bietet SSH, was für „Secure Shell“ steht. Ganz leicht
+                    lässt sich damit eine verschlüsselte Konsolenverbindung (ohne grafische Oberfläche) zu einem
+                    anderen Computer herstellen. Seit vielen Jahren gehört dieses Programm deshalb zum Werkzeugkoffer
+                    eines jeden Linux-Administrators. Unter Raspbian kann es mit folgenden Befehlen installiert und
+                    automatisch gestartet werden:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    sudo apt install openssh-server <br/>
+                    <span class="prompt">~ $</span>
+                    sudo systemctl enable sshd <br/>
+                    <span class="prompt">~ $</span>
+                    sudo systemctl start sshd <br/>
+                </div>
+                <p>
+                    Von nun an kann jeder SSH-Client (i.d.R. entweder OpenSSH oder Getty) verwendet werden, um auf
+                    den Raspberry Pi zuzugreifen. Tastatur und Maus werden dann nicht mehr benötigt.
+                </p>
+            </article>
+        </section>
+
+        <section>
+            <h1>Eigene Programme</h1>
+            <article>
+                <p>
+                    <a href="https://www.python.org/" target="_blank">Python</a> ist die mit Abstand beliebteste Programmiersprache
+                    für den Pi, da es sich sozusagen um die offizielle, von der Raspberry Pi Foundation hierfür auserkorene Sprache
+                    handelt. Letztlich soll sogar genau der Namenszusatz „Pi” auf diesen Umstand hinweisen. Der Grund dafür ist, dass
+                    Python als ursprüngliche Lehrsprache besonders einsteigerfreundlich ist, auf der anderen Seite aber keinerlei
+                    Einschränkungen hinsichtlich der damit realisierbaren Projekte besitzt. Nicht zuletzt deshalb ist Python auch
+                    besonders im wissenschaftlichen Bereich und bei KI-Forschern sehr beliebt. Doch auch andere Sprachen wie JavaScript
+                    oder Java lassen sich mit dem Raspberry Pi verwenden, wenngleich es für diese weitaus weniger Bibliotheken zur
+                    Ansteuerung fremder Hardwarebausteine gibt. Für Python gibt es hingegen so gut wie immer eine Bibliothek,
+                    insbesondere dann, wenn der Hersteller mit der Kompatibilität vom Raspberry Pi wirbt.
+                </p>
+                <p>
+                    Der Quellcode zur Ansteuerung der LED-Matrix besteht aus folgenden Dateien:
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dateiname</th>
+                            <th>Beschreibung</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td class="filename">
+                            install.sh
+                        </td>
+                        <td>
+                            Shellskript zur Installation des Programms
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="filename">
+                            ledmsgbar.service
+                        </td>
+                        <td>
+                            <a href="https://wiki.freedesktop.org/www/Software/systemd/" target="_blank">systemd</a>
+                            Service Definition
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="filename">
+                            requirements.txt
+                        </td>
+                        <td>
+                            Liste der zusätzlich benötigten Python-Module
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="filename">
+                            <b>src/ledmsgbar.py</b>
+                        </td>
+                        <td>
+                            Der eigentliche Quellcode des Programms
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="filename">
+                            <b>src/pixelmix/*</b>
+                        </td>
+                        <td>
+                        Schriftart für die Textausgabe auf dem LED-Display
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    Zur Installation müssen die genannten Dateien zunächst auf den Raspberry Pi übertragen werden, zum
+                    Beispiel in das Verzeichnis <tt>/home/pi/ledmsgbar</tt>, wobei <tt>/home/pi</tt> das persönliche
+                    Verzeichnis des Systembenutzers „<tt>pi</tt>” ist. Der Übertrag kann mit SFTP (Bestandteil von SSH)
+                    erfolgen. Anschließend muss das Installationsskript auf der Konsole aufgerufen werden:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    cd ~/ledmsgbar <br>
+                    <span class="prompt">~/ledmsgbar $</span>
+                    ./install.sh
+                </div>
+                <p>
+                    Das Skript nimmt folgende Änderungen am System vor:
+                </p>
+                <ol>
+                    <li>
+                        Die Anwendung wird in das Verzeichnis <tt>/opt/ledmsgbar</tt> kopiert.
+                    </li>
+                    <li>
+                        Für die Ausführung benötigte Debian-Pakete werden nachinstalliert.
+                    </li>
+                    <li>
+                        Innerhalb von <tt>/opt/ledmsgbar/env</tt> wird eine virtuelle Python-Umgebung erzeugt.
+                    </li>
+                    <li>
+                        In dieser werden die in der <tt>requirements.txt</tt> genannten Zusatzmodule installiert.
+                    </li>
+                    <li>
+                        In der Datei <tt>ledmsgbar.service</tt> wird der Installationspfad der Anwendung eingetragen.
+                    </li>
+                    <li>
+                        Anschließend wird die Datei nach <tt>/etc/systemd/system</tt> kopiert und der Service aktiviert.
+                    </li>
+                    <li>
+                        Zum Test der Installation wird der Service dann auch gleich gestartet.
+                    </li>
+                </ol>
+                <p>
+                    Die einzelnen Schritte bestehen jeweils nur aus ein/zwei relativ einfachen Linux-Kommandos.
+                    Um das Vorgehen aber Wiederholbar zu machen, haben wir sie trotzdem in ein kleines Skript verpackt.
+                    Anschließend können das ursprüngliche Verzeichnis wieder gelöscht und der Pi neugestartet werden.
+                    Nach ein paar Sekunden sollte die LED-Laufschrift dann wieder erscheinen.
+                </p>
+                <div class="console">
+                    <span class="prompt">~/ledmsgbar $</span>
+                    cd .. <br/>
+                    <span class="prompt">~ $</span>
+                    rm -r ledmsgbar <br/>
+                    <span class="prompt">~ $</span>
+                    reboot <br/>
+                </div>
+            </article>
+        </section>
+    </body>
+</html>
