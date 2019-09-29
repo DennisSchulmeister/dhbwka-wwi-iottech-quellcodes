@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Ansteuerung elementarer Bauteile</title>
+
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Rubik');
+
+            html {
+                font-family: "Rubik", sans-serif;
+                font-size: 10pt;
+                line-height: 1.6;
+            }
+
+            @media (min-width: 63em) {
+                html {
+                    font-size: 12pt;
+
+                    /* https://pixabay.com/photos/tool-work-repair-electrician-2766835/ */
+                    background-color: silver;
+                    background-image: url("img/tool-2766835_1280.jpg");
+                    background-size: cover;
+                    background-attachment: fixed;
+                    background-position: center;
+                }
+
+                section {
+                    background: white;
+                    box-shadow: 2px 2px 3px rgba(0,0,0, 0.3);
+
+                    max-width: 90em;
+                    margin: 0 auto;
+                    margin-top: 2em;
+                    margin-bottom: 2em;
+
+                    border-radius: 0.5rem;
+                    border: 1px solid #202020;
+                }
+
+                section > h1 {
+                    font-size: 200%;
+                    margin: 0;
+
+                    border-radius: 0.5rem 0.5rem 0 0;
+                }
+
+                section article {
+                    padding: 1em;
+                }
+
+                section p:first-child,
+                section h2:first-child,
+                section h3:first-child,
+                section h4:first-child {
+                    margin-top: 0;
+                }
+
+                section h2,
+                section h3,
+                section h4 {
+                    margin-bottom: 0.5em;
+                }
+
+                .grid {
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: stretch;
+                    justify-content: space-between;
+                    align-content: space-between;
+                }
+
+                .gridcol {
+                    box-sizing: border-box;
+                    width: calc(50% - 1em);
+                    margin: 0.5em !important;
+                }
+            }
+
+            .gridcol {
+                border: 1px solid lightgrey;
+                background: #fcfcff;
+                box-shadow: 1px 1px 2px rgba(0,0,0, 0.1);
+
+                margin: 0.5em 0 0.5em 0;
+            }
+
+            .gridcol > h3 {
+                background: #e0e0ee;
+                color: #24245E;
+
+                margin: 0;
+                padding: 0.25rem;
+            }
+
+            section > h1 {
+                padding: 0.25em;
+                margin-top: 1.5em;
+                color: white;
+                background: #0b557e;
+            }
+
+            section > h1:first-child {
+                margin-top: 0;
+            }
+
+            body > h1 {
+                text-align: center;
+                color: crimson;
+                text-shadow: white  1px  1px 1px,
+                             white  1px -1px 1px,
+                             white -1px  1px 1px,
+                             white -1px -1px 1px,
+                             black  2px  2px 2px,
+                             black  2px -2px 2px,
+                             black -2px  2px 2px,
+                             black -2px -2px 2px;
+                font-size: 300%;
+            }
+
+            p {
+                text-align: justify;
+                hyphens: auto;
+            }
+
+            a, a:visited {
+                color: #3968A1;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: #6E9ED9;
+            }
+
+            li {
+                margin-bottom: 0.5em;
+            }
+
+            .screenshot {
+                display: inline-block;
+                box-sizing: border-box;
+                width: 48%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                background: rgba(230,230,230);
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+
+                margin: 0.5em;
+
+                transition: transform 0.5s, box-shadow 0.5s;
+            }
+
+            .screenshot:hover {
+                transform: scale(1.025) rotate(1deg);
+                box-shadow: 2px 2px 4px rgba(0,0,0, 0.5);
+            }
+
+            .image {
+                display: inline-block;
+                width: 100%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+            }
+
+            .caption {
+                font-size: 85%;
+                text-align: center;
+            }
+
+            .footnote {
+                font-size: 75%;
+            }
+
+            pre.code {
+                margin-bottom: 1.5em !important;
+            }
+
+            table, tr, td {
+                vertical-align: top;
+            }
+            .filename {
+                font-family: monospace;
+                padding-right: 2em;
+                color: darkblue;
+            }
+            .skip {
+                padding-bottom: 1em;
+            }
+
+            /* Konsole */
+            .console {
+                font-family: monospace;
+                color: silver;
+                background: black;
+                padding: 0.5em;
+            }
+
+            .prompt {
+                color: deepskyblue;
+            }
+
+            /* Tabellen */
+            table {
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid lightgrey;
+                text-align: left;
+                padding: 0.25em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Ansteuerung elementarer Bauteile mit Raspberry Pi</h1>
+
+        <section>
+            <h1>Beschreibung</h1>
+            <article>
+                <p>
+                    Dieses Archiv enthält die Beispielquellcodes, mit denen die Schaltungen
+                    im Foliensatz „Hardwaredesign für IoT-Anwendungen” getestet wurden.
+                    Es handelt sich dabei um minimale Beispielprogramme, die zeigen, wie
+                    externe Bausteine über die GPIO-Pins des Raspberry Pi mit Python angesprochen
+                    werden können. Folgende Beispiele sind enthalten:
+                </p>
+
+                <div class="grid">
+                    <div class="gridcol">
+                        <h3>led_blink.py</h3>
+                        <ul>
+                            <li>Ein- und Ausschalten einer direkt verbundenen LED</li>
+                            <li>Schalten mittlerer Lasten über einen Transistor</li>
+                            <li>Schalten großer Lasten mit Hilfe eines Relais</li>
+                        </ul>
+                    </div>
+
+                    <div class="gridcol">
+                        <h3>led_pwm_blink.py</h3>
+                        <ul>
+                            <li>Periodisches Ein- und Ausschalten einer Last komplett in Hardware</li>
+                        </ul>
+                    </div>
+
+                    <div class="gridcol">
+                        <h3>led_pwm_fade.py</h3>
+                        <ul>
+                            <li>Helligkeitsregelung von Status-LEDs</li>
+                            <li>Helligkeitsregelung einer LED-Displaybeleuchtung</li>
+                            <li>Geschwindigkeitsregelung von Gleichstrommotoren</li>
+                        </ul>
+                    </div>
+
+                    <div class="gridcol">
+                        <h3>button_pulldown_external.py, button_pulldown_internal.py</h3>
+                        <ul>
+                            <li>Erkennen von Active-High Schließkontakten</li>
+                            <li>Abfrage von Tastern und Knöpfen als einfache Eingabegeräte</li>
+                        </ul>
+                    </div>
+
+                    <div class="gridcol">
+                        <h3>button_pullup_external.py, button_pullup_internal.py</h3>
+                        <ul>
+                            <li>Erkennen von Active-Low Schließkontakten</li>
+                            <li>Abfrage von Tastern und Knöpfen als einfache Eingabegeräte</li>
+                            <li>Erkennung von Unterbrechungen einer Lichtschranke</li>
+                        </ul>
+                    </div>
+
+                    <div class="gridcol">
+                        <h3>dht11.py</h3>
+                        <ul>
+                            <li>Abfrage einfacher serieller Sensoren am Beispiel des DHT11</li>
+                            <li>Periodische Messung von Temperatur und Luftfeuchtigkeit</li>
+                        </ul>
+                    </div>
+
+                    <div class="gridcol">
+                        <h3>spi_display_st7735.py</h3>
+                        <ul>
+                            <li>Ansteuerung einfacher serieller Aktoren am Beispiel ST7735-Displays</li>
+                            <li>Realisierung einfacher Text- und Grafikausgaben direkt in Hardware</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section>
+            <h1>Installation der benötigten Pakete</h1>
+            <article>
+                <p>
+                    Zur Installation aller benötigten Bibliotheken und Pakete kommt dieses Archiv mit einem
+                    einfachen Shellskript, das alle benötigten Schritte automatisiert. Öffen Sie hierzu einfach
+                    ein Konsolenfenster, nachdem Sie das ZIP-Archiv auf dem Pi entpackt haben und geben Sie
+                    folgende Befehle ein. Wir gehen dabei davon aus, dass Sie das Archiv direkt in Ihrem
+                    Home-Verzeichnis entpackt haben:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    cd Grundschaltungen <br/>
+                    <span class="prompt">~/Grundschaltungen $</span>
+                    chmod +x install.sh <br/>
+                    <span class="prompt">~/Grundschaltungen $</span>
+                    ./install.sh <br/>
+                </div>
+                <p>
+                    Zum Testen der Installation können Sie danach das <tt>led_blink</tt>-Beispiel starten.
+                    Selbst, wenn Sie noch keine Hardwareschaltung mit dem Raspberry Pi aufgebaut haben,
+                    sollten Sie auf der Konsole folgende Ausgaben sehen:
+                </p>
+                <div class="console">
+                    <span class="prompt">~/Grundschaltungen $</span>
+                    . env/bin/activate <br/>
+                    <span class="prompt">(env) ~/Grundschaltungen $</span>
+                    ./src/led_blink.py <br/>
+                    LED ist an <br/>
+                    LED ist aus <br/>
+                    <br/>
+                    LED ist an <br/>
+                    LED ist aus <br/>
+                    ^C<br/>
+                </div>
+
+                <br/>
+
+                <a href="img/install.png" target="_blank">
+                    <img
+                        src   = "img/install.png"
+                        alt   = "Konsolenausgabe während der Installation"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/test.png" target="_blank">
+                    <img
+                        src   = "img/test.png"
+                        alt   = "Konsolenausgabe während des Tests"
+                        class = "screenshot"
+                    />
+                </a>
+            </article>
+        </section>
+
+        <section>
+            <h1>Start der Beispielprogramme</h1>
+            <article>
+                <p>
+                    Wie bereits oben gezeigt, muss zunächst das Python-Environment mit den installierten
+                    Zusatzbibliotheken aktiviert werden, bevor die Beispiele ausgeführt werden können.
+                    Die hierfür benötigten Konsolenbefehle (ausgehend von einem neuen Konsolenfenster)
+                    lauten wie folgt:
+                </p>
+                <div class="console">
+                    <span class="prompt">~ $</span>
+                    cd Grundschaltungen <br/>
+                    <span class="prompt">~/Grundschaltungen $</span>
+                    . env/bin/activate <br/>
+                </div>
+                <p>
+                    Mit folgendem Befehl kann das Environment wieder verlassen werden:
+                </p>
+                <div class="console">
+                    <span class="prompt">(env) ~/Grundschaltungen $</span>
+                    deactivate <br/>
+                </div>
+            </article>
+        </section>
+
+        <section>
+            <h1>Nachbau der Schaltungen</h1>
+            <article>
+                <h2>LED über Widerstand direkt ansteuern 2(led_blink.py)<h2>
+                <a href="img/led_direkt_schaltplan.png" target="_blank">
+                    <img
+                        src   = "img/led_direkt_schaltplan.png"
+                        alt   = "Schaltplan zur direkten Ansteuerung einer LED über einen Widerstand"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/led_direkt_foto.jpg" target="_blank">
+                    <img
+                        src   = "img/led_direkt_foto.jpg"
+                        alt   = "Aufgebauter Prototyp zur Ansteuerung einer LED über einen Widerstand"
+                        class = "screenshot"
+                    />
+                </a>
+
+                <h2>Große Lasten über Relais schalten (led_blink.py)<h2>
+                <a href="img/led_relais_schaltplan.png" target="_blank">
+                    <img
+                        src   = "img/led_relais_schaltplan.png"
+                        alt   = "Schaltplan zum Schalten einer LED über ein Relais"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/led_relais_foto.jpg" target="_blank">
+                    <img
+                        src   = "img/led_relais_foto.jpg"
+                        alt   = "Aufgebauter Prototyp zum Schalten einer LED über ein Relais"
+                        class = "screenshot"
+                    />
+                </a>
+
+                <h2>Schließkontakt mit Pull-Down-Widerstand (button_pulldown_external.py)</h2>
+                <p>
+                    Für das Beispiel <tt>button_pulldown_internal.py</tt> einfach den Pull-Down-Widerstand weglassen.
+                </p>
+                <a href="img/button_pulldown_schaltplan.png" target="_blank">
+                    <img
+                        src   = "img/button_pulldown_schaltplan.png"
+                        alt   = "Schaltplan zur Abfrage eines Active-High Kontaktschalters mit Pull-Down-Widerstand"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/button_pulldown_foto.jpg" target="_blank">
+                    <img
+                        src   = "img/button_pulldown_foto.jpg"
+                        alt   = "Aufgebauter Prototyp zur Abfrage eines Active-High Kontaktschalters mit Pull-Down-Widerstand"
+                        class = "screenshot"
+                    />
+                </a>
+
+                <h2>Schließkontakt mit Pull-Up-Widerstand (button_pullup_external.py)</h2>
+                <p>
+                    Für das Beispiel <tt>button_pullup_internal.py</tt> einfach den Pull-Up-Widerstand weglassen.
+                </p>
+                <a href="img/button_pullup_schaltplan.png" target="_blank">
+                    <img
+                        src   = "img/button_pullup_schaltplan.png"
+                        alt   = "Schaltplan zur Abfrage eines Active-Low Kontaktschalters mit Pull-Up-Widerstand"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/button_pullup_foto.jpg" target="_blank">
+                    <img
+                        src   = "img/button_pullup_foto.jpg"
+                        alt   = "Aufgebauter Prototyp zur Abfrage eines Active-Low Kontaktschalters mit Pull-Up-Widerstand"
+                        class = "screenshot"
+                    />
+                </a>
+
+                <h2>DHT11-Sensor über 1-wire (dht11.py)</h2>
+                <a href="img/dht11_schaltplan.png" target="_blank">
+                    <img
+                        src   = "img/dht11_schaltplan.png"
+                        alt   = "Schaltplan zum Auslesen eines DHT11-Luftsensors"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/dht11_foto1.jpg" target="_blank">
+                    <img
+                        src   = "img/dht11_foto1.jpg"
+                        alt   = "Aufgebauter Prototyp zum Auslesen eines DHT11-Luftsensors"
+                        class = "screenshot"
+                    />
+                </a>
+                <a href="img/dht11_foto2.jpg" target="_blank">
+                    <img
+                        src   = "img/dht11_foto2.jpg"
+                        alt   = "Bildschirmausgabe während dem Auslesen des DHT11-Luftsensors"
+                        class = "screenshot"
+                    />
+                </a>
+            </article>
+        </section>
+    </body>
+</html>

@@ -1,0 +1,10 @@
+RPi.GPIO
+
+# DHT11 Sensor
+Adafruit-DHT
+smbus
+
+# SPI LCD-Display
+Adafruit_GPIO
+Pillow
+ST7735
