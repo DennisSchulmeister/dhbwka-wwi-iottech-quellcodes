@@ -1,0 +1,4 @@
+apsw            # SQLite-Wrapper
+cherrypy        # Eingebetteter Webserver
+Adafruit-DHT    # DHT11-Sensor
+RPi.GPIO        # Raspberry Pi GPIO

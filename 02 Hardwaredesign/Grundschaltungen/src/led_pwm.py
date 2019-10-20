@@ -19,7 +19,7 @@ import os, time
 import RPi.GPIO as GPIO
 
 GPIO_LED = 12
-FREQUENCY = 5
+FREQUENCY = 50
 DELAY_S = 0.2
 
 if __name__ == "__main__":
@@ -32,6 +32,8 @@ if __name__ == "__main__":
         # LED alle 0.2 Sekunden heller / dunkler machen
         duty_cycle = 0
         go_up = True
+
+        led_pwm.start(duty_cycle)
 
         while True:
             print("Duty Cycle: %s" % duty_cycle)

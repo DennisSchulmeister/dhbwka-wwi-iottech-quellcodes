@@ -1,0 +1,5 @@
+# TODO - Folgende Pakete hier einbinden:
+# apsw, cherrypy, Adfruit-DHT, RPi.GPIO
+
+# Die Pakete können dann mit folgendem Befehl installiert werden:
+# $ pip install -r requirements.txt
