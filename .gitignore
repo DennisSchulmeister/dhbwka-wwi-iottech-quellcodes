@@ -12,3 +12,5 @@ yarn-error.log
 **/tododb/
 
 
+*.pyc
+**/__pycache__/

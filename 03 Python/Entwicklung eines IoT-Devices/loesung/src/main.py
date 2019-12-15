@@ -25,23 +25,24 @@ from my_iot_device.statusled import StatusLedHandler
 
 if __name__ == "__main__":
     broker = PublishSubscribeBroker()
-    handlers = []
-    
-    handlers.append(ConsoleLogHandler(broker))     # Konsolenausgabe
-    handlers.append(AirSensorHandler(broker))      # Luftsensor
-    handlers.append(ButtonHandler(broker))         # Hardwarebutton
-    handlers.append(StatusLedHandler(broker))      # Status-LED
-    handlers.append(DatabaseHandler(broker))       # Lokale Datenbank
-    handlers.append(RestServerHandler(broker))     # Lokaler HTTP-REST-Server
-    
+
+    handlers = [
+        ConsoleLogHandler(broker),     # Konsolenausgabe
+        AirSensorHandler(broker),      # Luftsensor
+        ButtonHandler(broker),         # Hardwarebutton
+        StatusLedHandler(broker),      # Status-LED
+        DatabaseHandler(broker),       # Lokale Datenbank
+        RestServerHandler(broker),     # Lokaler HTTP-REST-Server
+    ]
+
     try:
         while True:
             time.sleep(10)
     except KeyboardInterrupt:
         pass
-    
+
     for handler in handlers:
         if hasattr(handler, "close"):
             handler.close()
-    
+
     print("Bye!")

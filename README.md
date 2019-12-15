@@ -11,8 +11,7 @@ in folgende Bereiche gegliedert, analog zu den Vorlesungsfolien:
 
  * **01 Grundlagen:** Theoretische und technische Grundlagen des IoT
  * **02 Hardwaredesign:** Hardwaredesign für IoT-Anwendungen
- * **03 Node-RED:** Entwicklung einfacher IoT-Devices mit Node-RED
- * **04 Programmierung:** Hardwarenahe Programmierung mit Python, Java, JavaScript
+ * **03 Programmierung:** IoT-Entwicklung in Python
 
 Copyright
 ---------
