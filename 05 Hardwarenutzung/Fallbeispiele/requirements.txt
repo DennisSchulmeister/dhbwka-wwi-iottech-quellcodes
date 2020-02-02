@@ -1,0 +1,10 @@
+# GPIO Allgemein
+RPi.GPIO
+
+# I²C Sensoren
+#TODO
+
+# SPI LCD-Display
+Adafruit_GPIO
+Pillow
+ST7735

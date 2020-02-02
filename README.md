@@ -11,7 +11,8 @@ in folgende Bereiche gegliedert, analog zu den Vorlesungsfolien:
 
  * **01 Grundlagen:** Theoretische und technische Grundlagen des IoT
  * **02 Hardwaredesign:** Hardwaredesign für IoT-Anwendungen
- * **03 Programmierung:** IoT-Entwicklung in Python
+ * **03 Python:** IoT-Entwicklung in Python
+ * **05 Hardwarenutzung:** Nutzung analoger und digitaler Bauteile
 
 Copyright
 ---------
