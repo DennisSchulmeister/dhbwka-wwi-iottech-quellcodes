@@ -2,7 +2,9 @@
 RPi.GPIO
 
 # I²C Sensoren
-#TODO
+smbus
+spidev
+adafruit-circuitpython-ads1x15
 
 # SPI LCD-Display
 Adafruit_GPIO
