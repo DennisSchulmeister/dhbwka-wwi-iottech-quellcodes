@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/face_recognition/json
+md5	e7e567a58dc66c6ee7ac91a9aeb19eb6  face_recognition-1.2.2.tar.gz
+sha256	f70d92c8582113fed669832cd8036819b66eebf4a535b1b43b1c0cede0072fb7  face_recognition-1.2.2.tar.gz
+# Locally computed sha256 checksums
+sha256	a97254e5ee8167a2bedd456b8c6710fde64d5603422e631d0bc3132c90d5c930  LICENSE

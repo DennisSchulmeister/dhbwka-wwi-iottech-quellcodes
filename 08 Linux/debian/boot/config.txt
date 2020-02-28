@@ -1,0 +1,33 @@
+# Disable overscan assuming the display supports displaying the full resolution
+# If the text shown on the screen disappears off the edge, comment this out
+disable_overscan=1
+
+# Bild auf dem RaspberryPi-Touch-Display drehen
+# Vgl. https://maker-tutorials.com/raspberry-pi-touchscreen-installieren-und-anschliessen-tipps-tricks/
+#
+# lcd_rotate=0          ->    Normal
+# lcd_rotate=1          ->    90 Grad
+# lcd_rotate=2          ->    180 Grad
+# lcd_rotate=3          ->    270 Grad
+# lcd_rotate=0x10000    ->    horizontal spiegeln
+# lcd_rotate=0x20000    ->    vertikal spiegeln
+lcd_rotate=2
+
+# How much memory in MB to assign to the GPU on Pi models having
+# 256, 512 or 1024 MB total memory
+gpu_mem_256=128
+gpu_mem_512=128
+gpu_mem_1024=128
+
+# Aktivieren der 3D-Beschleunigung. Damit man etwas sieht, muss beim Hochfahren
+# das Kernelmodul vc4 geladen werden. Sollte eigentlich automatisch passieren,
+# das scheint aber nicht immer zu klappen. Deshalb muss in der /etc/inittab
+# zur Sicherheit der Befehl "modprobe -a vc4" ausgeführt werden, damit man
+# was auf dem Bildschirm sieht
+dtoverlay=vc4-fkms-v3d
+
+## enable 64bits support
+#arm_control=0x200
+
+# enable rpi3 ttyS0 serial console
+enable_uart=1

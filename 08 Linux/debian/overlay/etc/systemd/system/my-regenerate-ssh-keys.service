@@ -1,0 +1,10 @@
+[Unit]
+Description=Regenerate SSH Keys
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ssh-keygen -A
+
+[Install]
+WantedBy=default.target
+

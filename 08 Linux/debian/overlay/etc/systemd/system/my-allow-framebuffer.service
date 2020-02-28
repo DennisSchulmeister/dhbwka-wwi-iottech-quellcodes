@@ -1,0 +1,13 @@
+[Unit]
+Description=Grant Access to Framebuffer and Input Devices
+
+[Service]
+Type=oneshot
+ExecStart=/bin/chmod 666 /dev/fb0
+ExecStart=/bin/chmod -R 777 /dev/dri
+ExecStart=/bin/chmod -R 777 /dev/input
+ExecStart=/bin/chmod -R 777 /sys/class/input
+
+[Install]
+WantedBy=default.target
+

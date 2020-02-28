@@ -1,0 +1,23 @@
+#! /bin/sh -i
+
+export XDG_RUNTIME_DIR=~/.xdg
+mkdir -p $XDG_RUNTIME_DIR
+chmod 0700 $XDG_RUNTIME_DIR
+
+weston-launch -- -c /opt/wayland/weston.ini --tty=1 &
+
+# Warten, bis Wayland vollständig verfügbar ist
+while true; do
+    sleep 1
+    if [ -e $XDG_RUNTIME_DIR/wayland-0 ]; then
+        break
+    fi
+done
+
+# Automatisch zu startende Anwendungen
+weston-terminal &
+
+# Sicherstellen, dass sich Wayland nicht aufhängt
+while true; do
+    sleep 86400
+done

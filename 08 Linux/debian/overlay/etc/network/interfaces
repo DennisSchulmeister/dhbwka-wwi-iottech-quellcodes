@@ -1,0 +1,24 @@
+# Loopback Device
+auto lo
+iface lo inet loopback
+
+## Dynamische IP via DHCP
+#auto eth0
+#iface eth0 inet dhcp
+#    post-up sleep 5; /sbin/ntpd -p pool.ntp.org
+#    post-down killall ntpd
+
+# Statische IP für die Entwicklung
+auto eth0
+iface eth0 inet static
+    address 192.168.99.99
+    netmask 255.255.255.0
+
+# WLAN
+# Zugangsdaten stehen in der Datei /etc/wpa_supplicant.conf
+# Zum automatischen Start des WLAN entfernen Sie das # vor der nächsten Zeile
+#auto wlan0
+iface wlan0 inet dhcp
+    pre-up wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+    pre-down killall wpa_supplicant
+    wpa-conf /etc/wpa_supplicant.conf

@@ -1,0 +1,9 @@
+/etc/ssh/ssh_host_rsa_key	f	600	root	root	-	-	-	-	-
+#/opt/wayland/weston	f	755	root	root	-	-	-	-	-
+#/opt/x11/startx	f	755	root	root	-	-	-	-	-
+
+# Für das pppd-Package zur Nutzung eines Surfsticks (3G-Modem)
+#/dev/ppp	c	755	root	root	108	0	-	-	-
+
+# Eigene Python-Datei direkt ausführbar machen
+#/opt/hallo/hallo-python.py	f	755	root	root	-	-	-	-	-

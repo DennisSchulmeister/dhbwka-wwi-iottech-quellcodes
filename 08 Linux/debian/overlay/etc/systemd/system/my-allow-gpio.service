@@ -1,0 +1,11 @@
+[Unit]
+Description=Grant access to GPIO pins to everyone
+
+[Service]
+Type=oneshot
+ExecStart=/bin/chmod 666 /dev/gpiomem
+ExecStart=/bin/chmod -R 777 /sys/class/gpio
+
+[Install]
+WantedBy=default.target
+

@@ -1,0 +1,98 @@
+# /etc/inittab
+#
+# Diese Datei startet die Systemdienste beim Hochfahren des Systems.
+# Jede Zeile entspricht einem zu startenden Programm.
+#
+# Format einer Zeile: <id>:<runlevels>:<action>:<process>
+#
+# id        == ttyX oder leer für /dev/console
+# runlevels == Wird von BusyBox ignoriert
+# action    == sysinit, shutdown, respawn, askfirst, wait oder once
+# process   == Auszuführendes Programm
+#
+# Mit tty1, tty2, ... sind virtuelle Konsolen gemeint. Mit Strg+Alt+F1, Strg+Alt+F2, ...
+# kann zwischen den virtuellen Konsolen umgeschaltet werden.
+#
+# Vgl. http://spblinux.de/2.0/doc/init.html
+# Vgl. https://git.busybox.net/busybox/tree/examples/inittab
+
+# Damit der Bildschirm angeht, wenn in der config.txt "dtoverlay=vc4-fkms-v3d"
+# enthalten ist. Dadurch wird auch die 3D-Beschleunigung aktiviert.
+::sysinit:/sbin/modprobe -a vc4
+
+# Ändern Sie in der Zeile "::sysinit:/bin/mount -o remount,rw /" das "rw"
+# zu "ro", wenn Sie das Root Filesystem read-only mounten wollen. Dadurch wird
+# es möglich, das System gefahrlos einfach vom Strom zu trennen, anstatt es
+# herunterfahren zu müssen.
+::sysinit:/bin/mount -t proc proc /proc
+::sysinit:/bin/mount -o remount,rw /
+::sysinit:/bin/mkdir -p /dev/pts
+::sysinit:/bin/mkdir -p /dev/shm
+::sysinit:/bin/mount -a
+
+::shutdown:/sbin/swapoff -a
+::shutdown:/bin/umount -a -r
+
+::sysinit:/etc/init.d/S10udev start
+#::once:/sbin/ifup -a
+::sysinit:/bin/hostname -F /etc/hostname
+::sysinit:/sbin/syslogd
+::sysinit:/sbin/klogd
+::sysinit:/etc/init.d/S20urandom start
+::sysinit:/usr/bin/loadkeys de-latin1
+
+::shutdown:/sbin/ifdown -a
+::ctrlaltdel:/sbin/reboot
+
+# Jedermann Zugriff auf den Framebuffer und die Eingabegeräte erlauben.
+# Standardmäßig darf das nur root.
+::sysinit:/bin/chmod 666 /dev/fb0
+::sysinit:/bin/chmod -R 777 /dev/dri
+::sysinit:/bin/chmod -R 777 /dev/input
+::sysinit:/bin/chmod -R 777 /sys/class/input
+
+# Device Node für pppd erzeugen (falls Sie einen Surfstick nutzen wollen)
+::once:/usr/bin/mknod /dev/ppp c 108 0
+
+# Wenn Sie die nachfolgende Zeile wieder einkommentieren, werden bei jedem
+# Systemstart neue SSH Host Keys generiert. Das erhöht die Sicherheit, führt
+# aber zu Fehlermeldungen, wenn Sie sich wiederholt per SSH am Raspberry Pi
+# anmelden wollen.
+#
+# Löschen Sie die Dateien in board/rootfs_overlay_base/etc/ssh oder tauschen Sie
+# sie aus, wenn Sie mit anderen SSH Host Keys arbeiten wollen.
+#
+#::sysinit:/usr/bin/ssh-keygen -A
+::once:/usr/sbin/sshd
+
+# Automatischer Start eines MariaDB-Datenbankservers
+#::wait:/etc/init.d/S97mysqld start
+#::shutdown:/etc/init.d/S97mysqld stop
+#::wait:/usr/bin/mysql < /etc/mysql/init.sql
+
+# Wenn Sie die folgenden Zeilen einkommentieren, werden die in /etc/init.d
+# abgelegten SysVInit-Skripte ausgeführt. Dadurch können einzelne Programme
+# ein Startskript bereitstellen, um beim Hochfahren automatisch gestartet zu
+# werden.
+#
+# Da wir hier aber ein spezialisiertes Embedded System bauen, wollen wir auf
+# diesen Komfort verzichten und die zu startenden Dienste selbst festlegen,
+# indem wir sie in diese Datei aufnehmen.
+#
+# HINWEIS: Unter Linux gibt es viele verschiedene Init-Systeme. Traditionell
+# nutzt Linux das von Unix bekannte SysVInit. Moderne Distributionen haben dies
+# aber durch das effizientere SystemD abgelöst. Hier kommt weder das eine noch
+# das andere zum Einsatz. Wir nutzen hier das Init-Programm von BusyBox, da es
+# klein ist und für unsere Zwecke ausreicht.
+#
+#::sysinit:/etc/init.d/rcS
+#::shutdown:/etc/init.d/rcK
+
+# Kommentieren Sie die folgenden Zeilen aus, um den Login auf der Konsole zu
+# unterbinden. Stattdessen fügen Sie weitere Zeilen hinzu, um die von Ihnen
+# bereitgestellten Systemdienste und Programme zu starten.
+#console::respawn:/sbin/getty -L console 0 vt100 # SERIAL
+tty1::respawn:/sbin/getty -L tty1 0 vt100 # HDMI
+
+# Browser für HTML-Oberfläche (make dhbw_html_defconfig)
+#tty1::respawn:-su -l mulder -c "/bin/qt-webkit-kiosk --uri https://www.wpvs.de/"

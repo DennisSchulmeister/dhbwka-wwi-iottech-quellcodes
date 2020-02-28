@@ -1,0 +1,10 @@
+# Siehe: http://www.reactivated.net/writing_udev_rules.html
+
+# Die folgenden udev-Regeln stellen sicher, dass das Netzwerk konfiguriert wird,
+# sobald das Netzwerk-Interface im Kernel verfügbar ist. Würden Sie stattdessen
+# den Befehl "ifup -a" in der Datei /etc/inittab beim Systenstart ausführen,
+# könnte es passieren, dass der Befehl zu früh ausgeführt wird und dann keine
+# Wirkung hat.
+
+KERNEL=="eth*", SUBSYSTEM=="net", RUN+="/sbin/ifup -a"
+KERNEL=="wlan*", SUBSYSTEM=="net", RUN+="/sbin/ifup -a"

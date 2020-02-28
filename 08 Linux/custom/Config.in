@@ -1,0 +1,11 @@
+#source "$BR2_EXTERNAL_DHBW_PATH/package/jdk/Config.in"
+
+# dlib
+source "$BR2_EXTERNAL_DHBW_PATH/package/libdlib/Config.in"
+source "$BR2_EXTERNAL_DHBW_PATH/package/python-dlib/Config.in"
+
+# Andere Python-Pakete
+source "$BR2_EXTERNAL_DHBW_PATH/package/python-face_recognition/Config.in"
+source "$BR2_EXTERNAL_DHBW_PATH/package/python-face_recognition_models/Config.in"
+source "$BR2_EXTERNAL_DHBW_PATH/package/python-picamera/Config.in"
+source "$BR2_EXTERNAL_DHBW_PATH/package/python-imutils/Config.in"

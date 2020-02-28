@@ -1,0 +1,38 @@
+config BR2_PACKAGE_PYTHON_DLIB
+	bool "python-dlib"
+	select BR2_PACKAGE_GIFLIB
+	select BR2_PACKAGE_LIBJPEG
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_SQLITE
+	depends on BR2_PACKAGE_PYTHON3
+	help
+	  Dlib is a modern C++ toolkit containing machine learning
+	  algorithms and tools for creating complex software in C++
+	  to solve real world problems. It is used in both industry
+	  and academia in a wide range of domains including robotics,
+	  embedded devices, mobile phones, and large high performance
+	  computing environments. Dlib's open source licensing allows
+	  you to use it in any application, free of charge.
+	  
+	  NOTE: This is the python version of dlib, which statically
+	  links against libdlib, as per upstream. If you also need
+	  the C++ library itself you need to enable libdlib, too.
+
+	  http://dlib.net/
+
+comment "python-dlib requires python3"
+	depends on !BR2_PACKAGE_PYTHON3
+
+if BR2_PACKAGE_PYTHON_DLIB
+
+config BR2_PACKAGE_PYTHON_DLIB_GUI_SUPPORT
+	bool "gui support"
+	depends on BR2_PACKAGE_XLIB_LIBX11
+	help
+	  gui widgets for libdlib
+
+comment "gui support needs libX11"
+	depends on !BR2_PACKAGE_XLIB_LIBX11
+
+endif
+

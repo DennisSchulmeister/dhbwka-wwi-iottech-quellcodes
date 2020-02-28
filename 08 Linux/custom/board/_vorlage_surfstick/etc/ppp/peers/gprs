@@ -1,0 +1,38 @@
+# Konfiguration des PPP-Daemon für einen Internetzugang via Mobilfunk-Surfstick (3G-Modem)
+# Vgl. https://wiki.debian.org/Modem/3G
+# Vgl. https://ppp.samba.org/documentation.html
+# Vgl. https://linuxwiki.de/GPRS
+
+# Ersetzen Sie den Wert nach -T mit der APN Ihres Mobilfunkproviders
+# Ersetzen Sie den Wert nach -U mit der PIN der SIM-Karte
+connect "/usr/sbin/chat -v -f /etc/ppp/peers/chatscript -T pinternet.interkom.de U 0000"
+
+# Kommentieren Sie "noauth" hier aus und entfernen Sie das Kommentarzeichen
+# vor "user" und "pass", wenn Ihr Mobilfunkprovider eine Authentifizierung benötigt.
+noauth
+#user "YOUR_USERNAME"
+#pass "YOUR_PASSWORD"
+
+# show-password: Passwort in den Debug-Ausgaben zeigen
+# hide-password: Passwort nicht in den Debug-Ausgaben zeigen
+show-password
+
+# Eventuell müssen Sie hier ein anderes Serial-Device angeben,
+# da die meisten Surfsticks mehrere Devices zur Verfügung stellen.
+# Die anderen Devices geben dann Statusinformationen aus, die mit
+# dem cat-Programm auf der Konsole ausgegeben werden können.
+/dev/ttyAMA0
+
+# Den Rest sollten Sie so stehen lassen können
+noipdefault
+defaultroute
+#lcp-echo-interval 30
+#lcp-echo-failure 4
+persist
+#mtu 1492
+#maxfail 0
+#holdoff 20
+usepeerdns
+
+# Falls Sie mehrere Surfsticks benutzen und dieser hier als ppp2 auftauchen soll
+#unit 2

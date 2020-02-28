@@ -1,0 +1,10 @@
+[Unit]
+Description=Switch Keyboard Layout
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/loadkeys de-latin1
+
+[Install]
+WantedBy=default.target
+

@@ -1,0 +1,3 @@
+Cmnd_Alias SHUTDOWN_CMDS = /sbin/shutdown, /sbin/halt, /sbin/reboot, /sbin/poweroff
+%wheel	ALL=(ALL)   NOPASSWD: SHUTDOWN_CMDS
+%sudo	ALL=(ALL)   NOPASSWD: SHUTDOWN_CMDS
