@@ -1,0 +1,9 @@
+[Unit]
+Description=Pythonprogramm für mein IoT-Device
+After=network.target
+
+[Service]
+ExecStart=/opt/iotdevice/env/bin/python3 /opt/iotdevice/src/main.py
+
+[Install]
+WantedBy=multi-user.target
