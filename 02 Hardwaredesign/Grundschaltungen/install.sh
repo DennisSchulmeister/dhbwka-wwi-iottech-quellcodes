@@ -31,3 +31,12 @@ echo ">>> Installiere Python-Module"
 echo
 python3 -m venv --system-site-packages $ENV_DIR
 $ENV_DIR/bin/pip3 install -r requirements.txt
+
+echo
+echo ">>> Setze Berechtigungen"
+echo
+chmod +x src/*.py
+
+echo
+echo "HAVE FUN!"
+echo
