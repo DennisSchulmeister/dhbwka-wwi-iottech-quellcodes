@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Einparkhilfe: Anforderungen</title>
+
+        <style>
+            html {
+                /* https://pixabay.com/illustrations/office-material-teacher-rule-2974407/ */
+                background-image: url(img/office-2974407_1280.png);
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+
+                margin: 0;
+                padding: 0;
+
+                font-family: sans-serif;
+                font-size: 18pt;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+
+            body {
+                max-width: 50em;
+
+                border: 1px solid lightgrey;
+                background-color: rgba(255,255,255, 0.9);
+                box-shadow: 1px 1px 2px rgba(0,0,0, 0.25);
+                border-radius: 0.5em;
+                padding: 1em;
+            }
+
+
+            h1 {
+                color: crimson;
+                text-shadow: 1px 1px 1px rgba(0,0,0, 0.33);
+            }
+
+            h2 {
+                font-size: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Anforderungen an das Device</h1>
+        
+        <p>
+            Es soll eine Einparkhilfe programmiert werden, wie man sie vom Auto her kennt. Das heißt,
+            mit Hilfe eines Ultraschallsensors soll der Abstand zum nächsten Hinderniss gemessen und
+            je nach Abstand ein immer schneller werdender Piepston ausgegeben werden.
+        </p>
+
+        <h2>Hardware</h2>
+        <ul>
+            <li>Die Messung soll zunächst inaktiv sein.</li>
+            <li>Durch Drücken eines Hardwarebuttons wird der Sensor aktiviert.</li>
+            <li>Durch erneutes Drücken wird der Sensor wieder deaktiviert.</li>
+            <li>Die Messung soll mehrmals pro Sekunde erfolgen.</li>
+            <li>Die Entfernung soll durch eine LED und einen Piepser signalisiert werden.</li>
+            <li>Das Piepsen soll umso schneller werden, je näher das Hinderniss kommt.</li>
+        </ul>
+
+        <h2>Programmierung</h2>
+        <ul>
+            <li>Der Quellcode soll modular aufgebaut werden und einfach zu erweitern sein.</li>
+            <li>Die wichtigsten Arbeitsschritte des Programms sollen auf der Konsole protokolliert werden.</li>
+            <li>IoT-Anforderungen müssen nicht erfüllt werden, aber einfach nachrüstbar sein.</li>
+            <li>Optional soll das Programm über eine grafische Oberfläche verfügen.</li>
+        </ul>
+    </body>
+</html>

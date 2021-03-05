@@ -1,0 +1,7 @@
+# Hardwareansteuerung
+RPi.GPIO
+
+# Benutzeroberfläche
+# sudo apt install libsdl2-ttf-2.0-0
+pygame
+pygame_gui
