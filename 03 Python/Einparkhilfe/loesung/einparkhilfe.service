@@ -1,0 +1,9 @@
+[Unit]
+Description=Pythonprogramm für eine einfache Einparkhilfe
+After=network.target
+
+[Service]
+ExecStart=/opt/einparkhilfe/env/bin/python3 /opt/einparkhilfe/src/main.py
+
+[Install]
+WantedBy=multi-user.target
