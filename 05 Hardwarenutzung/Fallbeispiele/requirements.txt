@@ -10,3 +10,6 @@ adafruit-circuitpython-ads1x15
 Adafruit_GPIO
 Pillow
 ST7735
+
+# Joystick (einfache Version)
+ADS1x15-ADC

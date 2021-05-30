@@ -25,8 +25,8 @@ def set_motor_position(percent):
     Vgl. https://components101.com/servo-motor-basics-pinout-datasheet
 
     Die Position des Servomotors wird mit einem PWM-Signal gesteuert,
-    dass einen Zyklus von 20ms = 50 Hz haben muss. Innerhalb dieses
-    Zyklus signbalisieren ein Puls von 1ms (5% Lastzyklus) die Position
+    das einen Zyklus von 20ms = 50 Hz haben muss. Innerhalb dieses
+    Zyklus signalisiert ein Puls von 1ms (5% Lastzyklus) die Position
     ganz links und ein Puls von 2ms (10% Lastzyklus) ganz rechts.
 
     Das Signal muss so lange aufrecht erhalten werden, bis der Servo

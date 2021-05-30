@@ -43,11 +43,47 @@
             h2 {
                 font-size: 1em;
             }
+
+            .screenshot {
+                display: inline-block;
+                box-sizing: border-box;
+                width: 100%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                background: rgba(230,230,230);
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+
+                /*margin: 0.5em;*/
+
+                transition: transform 0.5s, box-shadow 0.5s;
+            }
+
+            .screenshot:hover {
+                transform: scale(1.025) rotate(1deg);
+                box-shadow: 2px 2px 4px rgba(0,0,0, 0.5);
+            }
+
+            .image {
+                display: inline-block;
+                width: 100%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+            }
+
+            .caption {
+                font-size: 85%;
+                text-align: center;
+            }
         </style>
     </head>
     <body>
         <h1>Anforderungen an das Device</h1>
-        
+
         <p>
             Es soll eine Einparkhilfe programmiert werden, wie man sie vom Auto her kennt. Das heißt,
             mit Hilfe eines Ultraschallsensors soll der Abstand zum nächsten Hinderniss gemessen und
@@ -63,6 +99,16 @@
             <li>Die Entfernung soll durch eine LED und einen Piepser signalisiert werden.</li>
             <li>Das Piepsen soll umso schneller werden, je näher das Hinderniss kommt.</li>
         </ul>
+
+        <div>
+            <a href="img/einparkhilfe_bb.png" target="_blank">
+                <img
+                    src   = "img/einparkhilfe_bb.png"
+                    alt   = "Breadboard-Aufbau"
+                    class = "screenshot"
+                />
+            </a>
+        </div>
 
         <h2>Programmierung</h2>
         <ul>

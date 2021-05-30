@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Beispiele zur Hardwarenutzung in Python</title>
+
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Rubik');
+
+            html {
+                font-family: "Rubik", sans-serif;
+                font-size: 10pt;
+                line-height: 1.6;
+            }
+
+            @media (min-width: 63em) {
+                html {
+                    font-size: 12pt;
+
+                    /* https://pixabay.com/photos/tool-work-repair-electrician-2766835/ */
+                    background-color: silver;
+                    background-image: url("img/tool-2766835_1280.jpg");
+                    background-size: cover;
+                    background-attachment: fixed;
+                    background-position: center;
+                }
+
+                section {
+                    background: white;
+                    box-shadow: 2px 2px 3px rgba(0,0,0, 0.3);
+
+                    max-width: 90em;
+                    margin: 0 auto;
+                    margin-top: 2em;
+                    margin-bottom: 2em;
+
+                    border-radius: 0.5rem;
+                    border: 1px solid #202020;
+                }
+
+                section > h1 {
+                    font-size: 200%;
+                    margin: 0;
+
+                    border-radius: 0.5rem 0.5rem 0 0;
+                }
+
+                section article {
+                    padding: 1em;
+                }
+
+                section p:first-child,
+                section h2:first-child,
+                section h3:first-child,
+                section h4:first-child {
+                    margin-top: 0;
+                }
+
+                section h2,
+                section h3,
+                section h4 {
+                    margin-bottom: 0.5em;
+                }
+            }
+
+            section > h1 {
+                padding: 0.25em;
+                margin-top: 1.5em;
+                color: white;
+                background: #0b557e;
+            }
+
+            section > h1:first-child {
+                margin-top: 0;
+            }
+
+            body > h1 {
+                text-align: center;
+                color: crimson;
+                text-shadow: white  1px  1px 1px,
+                             white  1px -1px 1px,
+                             white -1px  1px 1px,
+                             white -1px -1px 1px,
+                             black  2px  2px 2px,
+                             black  2px -2px 2px,
+                             black -2px  2px 2px,
+                             black -2px -2px 2px;
+                font-size: 300%;
+            }
+
+            p {
+                text-align: justify;
+                hyphens: auto;
+            }
+
+            a, a:visited {
+                color: #3968A1;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: #6E9ED9;
+            }
+
+            li {
+                margin-bottom: 0.5em;
+            }
+
+            .screenshot {
+                display: inline-block;
+                box-sizing: border-box;
+                width: 48%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                background: rgba(230,230,230);
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+
+                margin: 0.5em;
+
+                transition: transform 0.5s, box-shadow 0.5s;
+            }
+
+            .screenshot:hover {
+                transform: scale(1.025) rotate(1deg);
+                box-shadow: 2px 2px 4px rgba(0,0,0, 0.5);
+            }
+
+            .image {
+                display: inline-block;
+                width: 100%;
+                margin: 0 auto;
+
+                border: 1px solid #A0A0A0;
+                padding: 0.2em;
+                box-shadow: 0 0 2px rgba(0,0,0, 0.5);
+            }
+
+            .caption {
+                font-size: 85%;
+                text-align: center;
+            }
+
+            .footnote {
+                font-size: 75%;
+            }
+
+            pre.code {
+                margin-bottom: 1.5em !important;
+            }
+
+            table, tr, td {
+                vertical-align: top;
+            }
+            .filename {
+                font-family: monospace;
+                padding-right: 2em;
+                color: darkblue;
+            }
+            .skip {
+                padding-bottom: 1em;
+            }
+
+            /* Konsole */
+            .console {
+                font-family: monospace;
+                color: silver;
+                background: black;
+                padding: 0.5em;
+            }
+
+            .prompt {
+                color: deepskyblue;
+            }
+
+            /* Tabellen */
+            table {
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid lightgrey;
+                text-align: left;
+                padding: 0.25em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Beispiele zur Hardwarenutzung in Python</h1>
+
+        <section>
+            <h1>Beschreibung</h1>
+            <article>
+                <p>
+                    Dieses Projekt beinhaltet mehrere, direkt ausführbare Python-Skripte zur Demonstration des
+                    X40 Sensor Kits. Jedes Skript zeigt dabei die Verwendung eines bestimmten Bauteils (ggf. in
+                    Kombination mit dem Level Shifter oder A/D-Wandler-Modul).
+                </p>
+            </article>
+        </section>
+
+        <section>
+            <h1>Hindernisdetektor</h1>
+            <article>
+                <p>
+                    Dieses Beispiel zeigt, wie mit dem KY-032 Hindernisdetektor ein Gegenstand erkannt werden
+                    kann. Die zusätzlich angeschlossene Zweifarb-LED leuchtet grün, so lange kein Hindernis
+                    in der Nähe ist, sonst rot.
+                </p>
+                <div>
+                    <a href="img/hindernisdetektor-schaltplan.png" target="_blank">
+                        <img
+                            src   = "img/hindernisdetektor-schaltplan.png"
+                            alt   = "Schaltplan"
+                            class = "screenshot"
+                        />
+                    </a>
+                    <a href="img/hindernisdetektor_bb.png" target="_blank">
+                        <img
+                            src   = "img/hindernisdetektor_bb.png"
+                            alt   = "Breadboard"
+                            class = "screenshot"
+                        />
+                    </a>
+                </div>
+                <div>
+                    <a href="img/skizze.png" target="_blank">
+                        <img
+                            src   = "img/hindernisdetektor-foto1.jpg"
+                            alt   = "Foto 1"
+                            class = "screenshot"
+                        />
+                    </a>
+                    <a href="img/hindernisdetektor-foto1.jpg" target="_blank">
+                        <img
+                            src   = "img/hindernisdetektor-foto2.jpg"
+                            alt   = "Foto 2"
+                            class = "screenshot"
+                        />
+                    </a>
+                </div>
+            </article>
+        </section>
+
+        <section>
+            <h1>Joystick</h1>
+            <article>
+                <p>
+                    Diese beiden Skripte zeigen, wie mit Hilfe des A/D-Wandlers die Position des X/Y-Joysticks
+                    abgefragt werden kann. Leider ist das Beispiel in der Dokumentation der X40 Sensor Kits
+                    veraltet, da die verwendete Adafruit-Bibliothek seit 2016 nicht mehr weiterentwickelt wird.
+                    Das Skript <tt>joystick.py</tt> zeigt daher die Verwendung der Nachfolgebibliothek Circuit
+                    Python. Da die Verwendung aber etwas kompliziert ist (insb. da Circuit Python für eine
+                    Vielzahl von Schnittstellen und Hardwarebausteine konzipiert wurde), zeigt das Skript
+                    <tt>joystick-simple.py</tt> eine einfachere Version auf Basis der Bibliothek ADS1x15-ADC.
+                </p>
+                <div>
+                    <a href="img/joystick-schaltplan.png" target="_blank">
+                        <img
+                            src   = "img/joystick-schaltplan.png"
+                            alt   = "Schaltplan"
+                            class = "screenshot"
+                        />
+                    </a>
+                    <a href="img/joystick-breadboard.png" target="_blank">
+                        <img
+                            src   = "img/joystick-breadboard.png"
+                            alt   = "Vreadboard"
+                            class = "screenshot"
+                        />
+                    </a>
+                </div>
+            </article>
+        </section>
+
+        <section>
+            <h1>Lautstäreksensor</h1>
+            <article>
+                <p>
+                    Dieses Beispiel zeigt, wie der A/D-Wandler genutzt werden kann, um die Lautstärke eines
+                    angeschlossenen Mikrofons zu messen. Es muss allerdings dazu gesagt werden, dass die
+                    Messung nicht sehr genau ist, da hierfür eigentlich über einen längeren Zeitraum der
+                    Mittelwert der Messwerte gebildet werden müsste. In dieser einfachen Form zeigt das
+                    Beispiel daher nur einem groben Spitzenwert, der aufgrund der hochfrequenten Schwingungen
+                    typischer Schallereignisse nicht sehr aussagekräftig ist.
+                </p>
+                <div>
+                    <a href="img/lautstaerke-schaltplan.png" target="_blank">
+                        <img
+                            src   = "img/lautstaerke-schaltplan.png"
+                            alt   = "Schaltplan"
+                            class = "screenshot"
+                        />
+                    </a>
+                    <a href="img/lautstaerke-foto.jpg" target="_blank">
+                        <img
+                            src   = "img/lautstaerke-foto.jpg"
+                            alt   = "Foto"
+                            class = "screenshot"
+                        />
+                    </a>
+                </div>
+            </article>
+        </section>
+
+        <section>
+            <h1>Servomotor</h1>
+            <article>
+                <p>
+                    Dieses Beispiel zeigt wie ein mit Pulsweitenmodulation gesteuerter Servermotor in
+                    verschiedene Positionen bewegt werden kann. Allerdings sind Python und der Raspbery
+                    Pi generell keine guten Kandidaten zur Steuerung eines Servomotors, da hierfür
+                    präzises Timing verlangt wird, die beide nicht liefern können. Dies liegt daran,
+                    dass CPython eine relativ langsame, interpretierte Sprache und Raspbian kein
+                    optimiertes Realtime-Betriebssystem ist. Mit einem Arduino ließen sich daher mit
+                    im Grunde genommen dem gleichen Code bessere Ergebnisse erzielen.
+                </p>
+                <div>
+                    <a href="img/servomotor-schaltplan.png" target="_blank">
+                        <img
+                            src   = "img/servomotor-schaltplan.png"
+                            alt   = "Schaltplan"
+                            class = "screenshot"
+                        />
+                    </a>
+                    <a href="img/servomotor-foto.jpg" target="_blank">
+                        <img
+                            src   = "img/servomotor-foto.jpg"
+                            alt   = "Foto"
+                            class = "screenshot"
+                        />
+                    </a>
+                </div>
+            </article>
+        </section>
+    </body>
+</html>
