@@ -25,6 +25,9 @@ MD_Parola display = MD_Parola(DISPLAY_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DISPL
  * automatisch einmal aufgerufen.
  */
 void setup(void) {
+  Serial.begin(9600);
+  Serial.println("Setup");
+
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   display.begin();
 }
@@ -42,6 +45,7 @@ void loop(void) {
     prevButtonValue = buttonValue;
 
     if (buttonValue == HIGH && !firstRun) {
+      Serial.println("Button pressed - toggle animation on/off");
       suspend = !suspend;
       display.displaySuspend(suspend);
     } else {
