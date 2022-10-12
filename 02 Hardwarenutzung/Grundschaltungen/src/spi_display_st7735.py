@@ -1,4 +1,4 @@
-#! ./env/bin/python3
+#! /bin/env python3
 #encoding=utf-8
 
 # Copyright (C) 2019 Dennis Schulmeister-Zimolong
