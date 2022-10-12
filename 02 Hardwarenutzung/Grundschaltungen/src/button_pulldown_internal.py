@@ -46,7 +46,7 @@ if __name__ == "__main__":
         GPIO.setup(GPIO_BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(GPIO_LED, GPIO.OUT)
 
-        GPIO.add_event_detect(GPIO_BUTTON, GPIO.BOTH)
+        GPIO.add_event_detect(GPIO_BUTTON, GPIO.HIGH)
         GPIO.add_event_callback(GPIO_BUTTON, on_button_event)
 
         # Endlosschleife, damit das Hauptprogramm weiterläuft
