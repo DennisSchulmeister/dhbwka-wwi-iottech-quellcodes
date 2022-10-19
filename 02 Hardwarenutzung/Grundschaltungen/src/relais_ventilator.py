@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
             timer_s += BLINK_S
 
-            if timer_s >= RELAIS_S
+            if timer_s >= RELAIS_S:
                 led_on    = False
                 relais_on = False
                 timer_s   = 0
