@@ -48,7 +48,7 @@ if __name__ == "__main__":
         GPIO.setup(GPIO_LED, GPIO.OUT)
         GPIO.setup(GPIO_RELAIS, GPIO.OUT)
 
-        GPIO.add_event_detect(GPIO_BUTTON, GPIO.HIGH)
+        GPIO.add_event_detect(GPIO_BUTTON, GPIO.RISING)
         GPIO.add_event_callback(GPIO_BUTTON, on_button_event)
 
         # Bei Knopfdruck LED blinken und Relais anschalten
