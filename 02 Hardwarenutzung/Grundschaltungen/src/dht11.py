@@ -17,7 +17,7 @@ Sensors muss hierzu mit GPIO 23 verbunden werden. Zusätzlich muss der Sensor
 import os, time
 import Adafruit_DHT
 
-GPIO_SENSOR = 23
+GPIO_SENSOR = 4
 DELAY_S = 2
 
 if __name__ == "__main__":
