@@ -36,6 +36,8 @@ def on_button_event(button):
     Button-Callback. Wird immer dann aufgerufen, wenn sich der Zustand
     des Hardware-Button Ändert.
     """
+    global led_on, relais_on, timer_s
+
     led_on    = True
     relais_on = True
     timer_s   = 0
