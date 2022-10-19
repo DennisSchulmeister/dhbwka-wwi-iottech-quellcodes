@@ -43,6 +43,8 @@ def on_button_event(button):
 if __name__ == "__main__":
     try:
         # GPIO-Pins initialisieren
+        GPIO.setwarnings(false)
+
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(GPIO_BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(GPIO_LED, GPIO.OUT)
