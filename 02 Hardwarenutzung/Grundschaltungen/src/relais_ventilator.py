@@ -40,7 +40,7 @@ def on_button_event(button):
     relais_on = True
     timer_s   = 0
 
-    print("Button wurde , schalte Verbraucher ein")
+    print("Button wurde gedrückt, schalte Verbraucher ein")
 
 if __name__ == "__main__":
     try:
