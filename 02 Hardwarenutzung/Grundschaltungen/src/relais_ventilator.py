@@ -1,7 +1,7 @@
 #! /bin/env python3
 #encoding=utf-8
 
-# Copyright (C) 2019 Dennis Schulmeister-Zimolong
+# Copyright (C) 2022 Dennis Schulmeister-Zimolong
 #
 # E-Mail: dhbw@windows3.de
 # Webseite: https://www.wpvs.de
@@ -10,10 +10,11 @@
 # Creative Commons Namensnennung 4.0 International Lizenz
 
 """
-Minimalbeispiel einer blinkenden LED. Hierzu wird einfach der GPIO 21
-abwechselnd ein und ausgeschaltet. Dieser kann dann entweder über einen
-Widerstand direkt die LED ansteuern, oder mit Hilfe eines Transistors
-oder Relais einen Laststrom schalten.
+Fallbeispiel für eine "komplexere" Hardwareansteuerung. Über einen Hardware-
+Button lässt sich ein Verbraucher ein- und ausschalten, wobei gleichzeitg eine
+LED blinkt, so lange der Verbraucher aktiv ist. Aus Softwaresicht ist egal, um
+was für einen Verbraucher es sich handelt. Im einfachsten Fall kann dies eine
+weitere LED sein oder ein über Transistor oder Relais geschaltetes Arbeitsgerät.
 """
 
 import os, time
@@ -21,7 +22,7 @@ import RPi.GPIO as GPIO
 
 GPIO_BUTTON = 20
 GPIO_LED    = 21
-GPIO_RELAIS = 22
+GPIO_RELAIS = 26
 BLINK_S     = 0.5
 RELAIS_S    = 10
 
