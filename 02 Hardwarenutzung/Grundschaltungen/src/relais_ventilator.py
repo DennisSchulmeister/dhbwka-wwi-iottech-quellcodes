@@ -40,6 +40,8 @@ def on_button_event(button):
     relais_on = True
     timer_s   = 0
 
+    print("Button wurde , schalte Verbraucher ein")
+
 if __name__ == "__main__":
     try:
         # GPIO-Pins initialisieren
@@ -53,12 +55,16 @@ if __name__ == "__main__":
         GPIO.add_event_detect(GPIO_BUTTON, GPIO.RISING)
         GPIO.add_event_callback(GPIO_BUTTON, on_button_event)
 
+        print("Bereit. Warte auf Knopfdruck")
+
         # Bei Knopfdruck LED blinken und Relais anschalten
         while True:
             time.sleep(BLINK_S)
 
             if not relais_on:
                 continue
+
+            print("Blink")
 
             led_on = not led_on
             GPIO.output(GPIO_LED, led_on)
@@ -73,6 +79,8 @@ if __name__ == "__main__":
 
                 GPIO.output(GPIO_LED, led_on)
                 GPIO.output(GPIO_RELAIS, relais_on)
+
+                print("Schalte Verbraucher aus")
 
     except KeyboardInterrupt:
         pass
