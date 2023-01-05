@@ -3,7 +3,7 @@ import pygame, pygame_gui, threading
 class MainWindow:
     """
     Klasse für ein einfaches User Interface auf Basis von PyGame. Zeigt, wie das
-    relativ simple Event-Modell der Anwendung auch dazu genutzt werden kann, di
+    relativ simple Event-Modell der Anwendung auch dazu genutzt werden kann, die
     Messwerte auf dem Bidlschirm darzustellen.
     
     Reagiert auf folgende Ereignisse:
