@@ -69,7 +69,7 @@ class MainWindow:
 
     def _sleep_with_constant_fps(self):
         """
-        Diese Methode sorgt dafür, dass das Programm nicht die gesamte CPU aulastet,
+        Diese Methode sorgt dafür, dass das Programm nicht die gesamte CPU auslastet,
         dabei aber dennoch eine konstante Framerate für den Bildaufbau erzielt. Sie
         muss hierfür in der Hauptschleife des Programms periodisch aufgerufen werden.
         Dabei misst sie dann die Zeit, die seit dem letzten Aufruf vergangen ist,
