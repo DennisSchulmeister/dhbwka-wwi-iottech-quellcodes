@@ -1,0 +1,47 @@
+version: '3.8'
+
+volumes:
+  data:
+
+networks:
+  iot-backend:
+    external: false
+    name: iot-backend
+
+services:
+  emqx:
+    image: emqx/emqx:latest
+    ports:
+      - 1883:1883
+      - 18083:18083
+    environment:
+      EMQX_HOST: 0.0.0.0
+      EMQX_DASHBOARD__DEFAULT_USERNAME: "admin"
+      EMQX_DASHBOARD__DEFAULT_PASSWORD: "dashboard123"
+    networks:
+      - iot-backend
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_DATABASE: sensor_db
+    ports:
+      - 27017:27017
+    volumes:
+      - data:/data/db
+    networks:
+      - iot-backend
+
+  sensor_data_subscriber:
+    build: ./sensor_data_subscriber
+    environment:
+      MQTT_BROKER_HOST: emqx
+      MQTT_BROKER_PORT: 1883
+      MQTT_BROKER_TOPIC: "iot-project/device/+/data/+"
+      MQTT_CLIENT_ID: "sensor_data_subscriber"
+      MONGO_DB_CONNECTION: "mongodb://mongodb:27017/sensor_db"
+    depends_on:
+      - emqx
+      - mongodb
+    networks:
+      - iot-backend
