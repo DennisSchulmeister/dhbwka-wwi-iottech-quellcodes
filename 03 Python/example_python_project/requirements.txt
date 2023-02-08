@@ -1,0 +1,10 @@
+--extra-index-url https://www.piwheels.org/simple
+autopep8==2.0.1
+greenlet==1.1.2
+ntplib==0.4.0
+pylint==2.16.1
+python-dotenv==0.21.1
+pytest==7.2.1
+pytz==2022.7.1
+RPi.GPIO; sys_platform == 'armv7l'
+sqlalchemy==1.4.46
