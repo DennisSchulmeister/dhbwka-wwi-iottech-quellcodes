@@ -32,7 +32,7 @@ if __name__ == "__main__":
         # Ultraschallsensor
         DistanceSensor(event_broker, gpio_pin_trigger=10, gpio_pin_echo=9),
         
-        # LED un Piepser
+        # LED und Piepser
         LedBeeper(event_broker, gpio_pin_led=7, gpio_pin_beeper=13,
                   distance_cm_min=10, distance_cm_max=50,
                   frequency_hz_min=10, frequency_hz_max=1)

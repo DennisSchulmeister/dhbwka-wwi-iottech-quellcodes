@@ -43,10 +43,11 @@ class TemperatureSensor():
         return lines
 
 
-    # Die Temperaturauswertung: Beim Raspberry Pi werden erkennte one-Wire Slaves im Ordner
+    # Die Temperaturauswertung: Beim Raspberry Pi werden erkannte one-Wire Slaves im Ordner
     # /sys/bus/w1/devices/ einem eigenen Unterordner zugeordnet. In diesem Ordner befindet
-    # sich die Datei w1-slave # in dem Die Daten, die über dem One-Wire Bus gesendet wurden gespeichert.
-    # In dieser Funktion werden diese Daten analysiert und die Temperatur herausgelesen und ausgegeben
+    # sich die Datei w1-slave, aus der Die Daten, die über dem One-Wire Bus gesendet wurden,
+    # gelesen werden können. In dieser Funktion werden diese Daten analysiert und die Temperatur
+    # herausgelesen und ausgegeben
     def temperature_evaluation(self) -> SensorReading:
         lines = self.__temperature_measurement()
         while lines[0].strip()[-3:] != 'YES':
